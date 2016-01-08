@@ -24,6 +24,16 @@ func (v *Vector) MulVec(m *Matrix) {
 	v[2] = z
 }
 
+// MulVecNew multiplies a matrix with the vector and returns a new vector.
+// MulVecNew Is slower than MulVec.
+func (v *Vector) MulVecNew(m *Matrix) *Vector {
+	return &Vector{
+		m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
+		m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
+		m[6]*v[0] + m[7]*v[1] + m[8]*v[2],
+	}
+}
+
 type Matrix [9]float64
 
 func RandMat(r *rand.Rand) *Matrix {
@@ -32,16 +42,6 @@ func RandMat(r *rand.Rand) *Matrix {
 		m[i] = r.Float64()
 	}
 	return &m
-}
-
-// MulVecNew multiplies the matrix with a vector and returns a new vector.
-// MulVecNew Is slower than MulVec.
-func (m *Matrix) MulVecNew(v *Vector) *Vector {
-	return &Vector{
-		m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
-		m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
-		m[6]*v[0] + m[7]*v[1] + m[8]*v[2],
-	}
 }
 
 // MulMat multiples the matrix with another matrix and modifies the former one.

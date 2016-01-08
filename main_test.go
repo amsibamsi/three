@@ -14,6 +14,32 @@ func TestMulVec(t *testing.T) {
 	}
 }
 
+func TestMulVecNew(t *testing.T) {
+	m := Matrix{0, 1, 2, 3, 4, 5, 6, 7, 8}
+	v := Vector{0, 1, 2}
+	w := v.MulVecNew(&m)
+	if w[0] != 5 || w[1] != 14 || w[2] != 23 {
+		t.Fail()
+	}
+}
+
+func TestMulMat(t *testing.T) {
+	m := Matrix{0, 1, 2, 3, 4, 5, 6, 7, 8}
+	n := Matrix{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	m.MulMat(&n)
+	if m[0] != 18 ||
+		m[1] != 21 ||
+		m[2] != 24 ||
+		m[3] != 54 ||
+		m[4] != 66 ||
+		m[5] != 78 ||
+		m[6] != 90 ||
+		m[7] != 111 ||
+		m[8] != 132 {
+		t.Fail()
+	}
+}
+
 func TestMulMatNew(t *testing.T) {
 	m := Matrix{0, 1, 2, 3, 4, 5, 6, 7, 8}
 	n := Matrix{1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -47,7 +73,7 @@ func BenchmarkMulVecNew(b *testing.B) {
 	m := RandMat(r)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		m.MulVecNew(v)
+		v.MulVecNew(m)
 	}
 }
 
