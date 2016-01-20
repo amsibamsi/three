@@ -23,6 +23,15 @@ func TestMulVecNew(t *testing.T) {
 	}
 }
 
+func TestTranslate(t *testing.T) {
+	v := Vector{2, 7, 6}
+	w := Vector{-1, 8, 1.1}
+	v.Translate(&w)
+	if v[0] != 1 || v[1] != 15 || v[2] != 7.1 {
+		t.Fail()
+	}
+}
+
 func TestMulMat(t *testing.T) {
 	m := Matrix{0, 1, 2, 3, 4, 5, 6, 7, 8}
 	n := Matrix{1, 2, 3, 4, 5, 6, 7, 8, 9}

@@ -34,6 +34,13 @@ func (v *Vector) MulVecNew(m *Matrix) *Vector {
 	}
 }
 
+// Translate adds another vector.
+func (v *Vector) Translate(w *Vector) {
+	v[0] += w[0]
+	v[1] += w[1]
+	v[2] += w[2]
+}
+
 type Matrix [9]float64
 
 func RandMat(r *rand.Rand) *Matrix {
