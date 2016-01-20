@@ -86,6 +86,16 @@ func BenchmarkMulVecNew(b *testing.B) {
 	}
 }
 
+func BenchmarkTranslate(b *testing.B) {
+	r := rand.New(rand.NewSource(0))
+	v := RandVec(r)
+	w := RandVec(r)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		v.Translate(w)
+	}
+}
+
 func BenchmarkMulMat(b *testing.B) {
 	r := rand.New(rand.NewSource(0))
 	m := RandMat(r)
