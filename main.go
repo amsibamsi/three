@@ -1,17 +1,24 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 )
 
 type Vector [3]float64
 
+// RandVec returns a new vector with random values.
 func RandVec(r *rand.Rand) *Vector {
 	v := Vector{}
 	for i := 0; i < 3; i++ {
 		v[i] = r.Float64()
 	}
 	return &v
+}
+
+// EqualVec returns whether the vector equals another one.
+func (v *Vector) EqualVec(w *Vector) bool {
+	return v[0] == w[0] && v[1] == w[1] && v[2] == w[2]
 }
 
 // MulVec multiplies the given matrix with the vector and modifies it.
@@ -25,7 +32,7 @@ func (v *Vector) MulVec(m *Matrix) {
 }
 
 // MulVecNew multiplies a matrix with the vector and returns a new vector.
-// MulVecNew Is slower than MulVec.
+// MulVecNew is slower than MulVec.
 func (v *Vector) MulVecNew(m *Matrix) *Vector {
 	return &Vector{
 		m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
@@ -41,8 +48,48 @@ func (v *Vector) Translate(w *Vector) {
 	v[2] += w[2]
 }
 
+// Magnitude of a vector.
+func (v *Vector) Mag() float64 {
+	return math.Sqrt(math.Pow(v[0], 2) + math.Pow(v[1], 2) + math.Pow(v[2], 2))
+}
+
+// Dot returns the product (scalar) with another vector.
+func (v *Vector) Dot(w *Vector) float64 {
+	return v[0]*w[0] + v[1]*w[1] + v[2]*w[2]
+}
+
+// Norm normalizes the vector, making its length 1.
+func (v *Vector) Norm() {
+	m := v.Mag()
+	v[0] /= m
+	v[1] /= m
+	v[2] /= m
+}
+
+// Cross returns the cross product of two vectors as new vector.
+func (v *Vector) Cross(w *Vector) *Vector {
+	return &Vector{
+		v[1]*w[2] - v[2]*w[1],
+		v[2]*w[0] - v[0]*w[2],
+		v[0]*w[1] - v[1]*w[0],
+	}
+}
+
 type Matrix [9]float64
 
+// EqualMat returns whether the matrix equals another one.
+func (m *Matrix) EqualMat(n *Matrix) bool {
+	e := true
+	for i := 0; i < 9; i++ {
+		if m[i] != n[i] {
+			e = false
+			break
+		}
+	}
+	return e
+}
+
+// RandMat return a new matrix with random values.
 func RandMat(r *rand.Rand) *Matrix {
 	m := Matrix{}
 	for i := 0; i < 9; i++ {
