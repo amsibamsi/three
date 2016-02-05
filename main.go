@@ -75,6 +75,11 @@ func (v *Vector) Cross(w *Vector) *Vector {
 	}
 }
 
+// Angle returns the angle between two vectors in radians.
+func (v *Vector) Angle(w *Vector) float64 {
+	return math.Acos(v.Dot(w) / (v.Mag() * w.Mag()))
+}
+
 type Matrix [9]float64
 
 // EqualMat returns whether the matrix equals another one.

@@ -1,18 +1,16 @@
 package main
 
 import (
+	"math"
 	"math/rand"
 	"testing"
 )
 
 func TestEqualVec(t *testing.T) {
-	v1 := Vector{1, 2, 3}
-	v2 := Vector{1, 2, 3}
-	v3 := Vector{1, 2, 4}
-	if !v1.EqualVec(&v2) {
+	if !(&Vector{1, 2, 3}).EqualVec(&Vector{1, 2, 3}) {
 		t.Fail()
 	}
-	if v2.EqualVec(&v3) {
+	if (&Vector{1, 1, 1}).EqualVec(&Vector{1, 1, 2}) {
 		t.Fail()
 	}
 }
@@ -69,6 +67,14 @@ func TestCross(t *testing.T) {
 	v4 := Vector{-3, 6, -3}
 	if !v3.EqualVec(&v4) {
 		t.Fail()
+	}
+}
+
+func TestAngle(t *testing.T) {
+	a := (&Vector{1, 0, 0}).Angle(&Vector{0, 1, 0})
+	b := math.Pi / 2
+	if a != b {
+		t.Errorf("Expected '%f' but got '%f'", b, a)
 	}
 }
 
