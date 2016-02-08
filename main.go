@@ -7,6 +7,11 @@ import (
 
 type Vector [3]float64
 
+// Dup duplicates the vector and returns a new instance.
+func (v *Vector) Dup() *Vector {
+	return &Vector{v[0], v[1], v[2]}
+}
+
 // RandVec returns a new vector with random values.
 func RandVec(r *rand.Rand) *Vector {
 	v := Vector{}
@@ -46,6 +51,13 @@ func (v *Vector) Translate(w *Vector) {
 	v[0] += w[0]
 	v[1] += w[1]
 	v[2] += w[2]
+}
+
+// Invert inverts the vector.
+func (v *Vector) Invert() {
+	v[0] = -v[0]
+	v[1] = -v[1]
+	v[2] = -v[2]
 }
 
 // Magnitude of a vector.

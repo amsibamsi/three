@@ -6,6 +6,19 @@ import (
 	"testing"
 )
 
+func TestDup(t *testing.T) {
+	v := Vector{1, 2, 3}
+	w := *v.Dup()
+	if &v == &w {
+		t.Error("Vectors should not be same pointer")
+	}
+	if v[0] != w[0] ||
+		v[1] != w[1] ||
+		v[2] != w[2] {
+		t.Error("Vectors should have equal values")
+	}
+}
+
 func TestEqualVec(t *testing.T) {
 	if !(&Vector{1, 2, 3}).EqualVec(&Vector{1, 2, 3}) {
 		t.Fail()
@@ -39,6 +52,16 @@ func TestTranslate(t *testing.T) {
 	v.Translate(&w)
 	if v[0] != 1 || v[1] != 15 || v[2] != 7.1 {
 		t.Fail()
+	}
+}
+
+func TestInvert(t *testing.T) {
+	v := Vector{1, 2, 3}
+	v.Invert()
+	if v[0] != -1 ||
+		v[1] != -2 ||
+		v[2] != -3 {
+		t.Error()
 	}
 }
 
