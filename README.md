@@ -1,1 +1,1 @@
-Some 3D code in Go.
+Some 3D coding in Go.
