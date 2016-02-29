@@ -57,9 +57,7 @@ func (m *Mat4) Mul(n *Mat4) {
 			}
 		}
 	}
-	for i := 0; i < 16; i++ {
-		m[i] = t[i]
-	}
+	*m = *t
 }
 
 // Proj projects a given vector with the projection matrix.
