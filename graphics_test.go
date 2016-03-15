@@ -1,3 +1,5 @@
+// Generate random matrix with Wolfram Alpha:
+// RandomInteger[{-10,10},{4,4}]
 package graphics
 
 import (
