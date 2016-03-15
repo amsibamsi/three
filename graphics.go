@@ -2,6 +2,7 @@
 package graphics
 
 import (
+	"math"
 	"math/rand"
 )
 
@@ -9,9 +10,9 @@ import (
 // Holds 4 components: x, y, z and w in this order.
 type Vec4 [4]float64
 
-// ZeroVec returns a new vector with x/z/y set to 0 and w set to 1.
-func ZeroVec() *Vec4 {
-	return &Vec4{0, 0, 0, 1}
+// NewVec returns a new vector with given x/y/z and w set to 1.
+func NewVec(x, y, z float64) *Vec4 {
+	return &Vec4{x, y, z, 1}
 }
 
 // Matrix with homogeneous coordinates
@@ -37,12 +38,36 @@ func RandMat(r *rand.Rand) *Mat4 {
 	return &m
 }
 
-// TranslMat returns a translation matrix that translates vectors by the given values for x/y/z axes.
+// TranslMat returns a new translation matrix that translates vectors by the given values for x/y/z axes.
 func TranslMat(x, y, z float64) *Mat4 {
 	return &Mat4{
 		1, 0, 0, x,
 		0, 1, 0, y,
 		0, 0, 1, z,
+		0, 0, 0, 1,
+	}
+}
+
+// RxMat returns a new rotation matrix that rotates about the x axis by a radians.
+func RxMat(a float64) *Mat4 {
+	s := math.Sin(a)
+	c := math.Cos(a)
+	return &Mat4{
+		1, 0, 0, 0,
+		0, c, -s, 0,
+		0, s, c, 0,
+		0, 0, 0, 1,
+	}
+}
+
+// RyMat returns a new rotation matrix that rotates about the y axis by a radians.
+func RyMat(a float64) *Mat4 {
+	s := math.Sin(a)
+	c := math.Cos(a)
+	return &Mat4{
+		c, 0, s, 0,
+		0, 1, 0, 0,
+		-s, 0, c, 0,
 		0, 0, 0, 1,
 	}
 }

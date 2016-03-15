@@ -3,9 +3,57 @@
 package graphics
 
 import (
+	"math"
 	"math/rand"
 	"testing"
 )
+
+func TestNewVec(t *testing.T) {
+	v := *NewVec(1, 2, 3)
+	r := Vec4{1, 2, 3, 1}
+	if v != r {
+		t.Errorf("expected '%v' but got '%v'", r, v)
+	}
+}
+
+func TestTranslMat(t *testing.T) {
+	m := *TranslMat(1, 2, 3)
+	r := Mat4{
+		1, 0, 0, 1,
+		0, 1, 0, 2,
+		0, 0, 1, 3,
+		0, 0, 0, 1,
+	}
+	if m != r {
+		t.Errorf("expected '%v' but got '%v'", r, m)
+	}
+}
+
+func TestRxMat(t *testing.T) {
+	m := *RxMat(0)
+	r := Mat4{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
+	}
+	if m != r {
+		t.Errorf("expected '%v' but got '%v'", r, m)
+	}
+}
+
+func TestRyMat(t *testing.T) {
+	m := *RyMat(0)
+	r := Mat4{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
+	}
+	if m != r {
+		t.Errorf("expected '%v' but got '%v'", r, m)
+	}
+}
 
 func TestMul(t *testing.T) {
 	m := Mat4{0, 3, 0, 1, 6, 3, 5, 3, 7, 4, 8, 7, 3, 6, 0, 3}
@@ -24,6 +72,36 @@ func TestProj(t *testing.T) {
 	p := *m.Proj(&v)
 	if p != r {
 		t.Errorf("expected '%v' but got '%v'", r, p)
+	}
+}
+
+func TestTransl(t *testing.T) {
+	v := Vec4{2, 1, 3, 1}
+	m := TranslMat(7, 1, -3)
+	r := Vec4{9, 2, 0, 1}
+	w := *m.Proj(&v)
+	if w != r {
+		t.Errorf("expected '%v' but got '%v'", r, w)
+	}
+}
+
+func TestRx(t *testing.T) {
+	v := Vec4{1, 1, 0, 1}
+	m := RxMat(math.Pi)
+	r := Vec4{1, -1, 0, 1}
+	w := *m.Proj(&v)
+	if w != r {
+		t.Errorf("expected '%v' but got '%v'", r, w)
+	}
+}
+
+func TestRy(t *testing.T) {
+	v := Vec4{1, 1, 0, 1}
+	m := RyMat(math.Pi / 2)
+	r := Vec4{0, 1, -1, 1}
+	w := *m.Proj(&v)
+	if w != r {
+		t.Errorf("expected '%v' but got '%v'", r, w)
 	}
 }
 
