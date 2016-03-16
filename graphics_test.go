@@ -88,20 +88,22 @@ func TestTransl(t *testing.T) {
 func TestRx(t *testing.T) {
 	v := Vec4{1, 1, 0, 1}
 	m := RxMat(math.Pi)
-	r := Vec4{1, -1, 0, 1}
+	r := [4]int{1, -1, 0, 1}
 	w := *m.Proj(&v)
-	if w != r {
-		t.Errorf("expected '%v' but got '%v'", r, w)
+	wi := [4]int{int(w[0]), int(w[1]), int(w[2]), int(w[3])}
+	if wi != r {
+		t.Errorf("expected '%v' but got '%v'", r, wi)
 	}
 }
 
 func TestRy(t *testing.T) {
 	v := Vec4{1, 1, 0, 1}
 	m := RyMat(math.Pi / 2)
-	r := Vec4{0, 1, -1, 1}
+	r := [4]int{0, 1, -1, 1}
 	w := *m.Proj(&v)
-	if w != r {
-		t.Errorf("expected '%v' but got '%v'", r, w)
+	wi := [4]int{int(w[0]), int(w[1]), int(w[2]), int(w[3])}
+	if wi != r {
+		t.Errorf("expected '%v' but got '%v'", r, wi)
 	}
 }
 
