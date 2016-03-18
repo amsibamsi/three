@@ -85,8 +85,7 @@ func (m *Mat4) Mul(n *Mat4) {
 	*m = *t
 }
 
-// Transf projects a given vector with the projection matrix.
-// Returns a new vector.
+// Transf returns a new transformed vector by multiplying the matrix with the given vector.
 func (m *Mat4) Transf(v *Vec4) *Vec4 {
 	p := Vec4{0, 0, 0, 0}
 	for i := 0; i < 4; i++ {
