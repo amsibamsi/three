@@ -85,9 +85,9 @@ func (m *Mat4) Mul(n *Mat4) {
 	*m = *t
 }
 
-// Proj projects a given vector with the projection matrix.
+// Transf projects a given vector with the projection matrix.
 // Returns a new vector.
-func (m *Mat4) Proj(v *Vec4) *Vec4 {
+func (m *Mat4) Transf(v *Vec4) *Vec4 {
 	p := Vec4{0, 0, 0, 0}
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {

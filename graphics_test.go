@@ -65,11 +65,11 @@ func TestMul(t *testing.T) {
 	}
 }
 
-func TestProj(t *testing.T) {
+func TestTransf(t *testing.T) {
 	m := Mat4{1, 3, 2, 2, 9, 10, 1, 9, 0, 4, 5, 1, 6, 8, 5, 8}
 	v := Vec4{10, 7, 0, 8}
 	r := Vec4{47, 232, 36, 180}
-	p := *m.Proj(&v)
+	p := *m.Transf(&v)
 	if p != r {
 		t.Errorf("expected '%v' but got '%v'", r, p)
 	}
@@ -79,7 +79,7 @@ func TestTransl(t *testing.T) {
 	v := Vec4{2, 1, 3, 1}
 	m := TranslMat(7, 1, -3)
 	r := Vec4{9, 2, 0, 1}
-	w := *m.Proj(&v)
+	w := *m.Transf(&v)
 	if w != r {
 		t.Errorf("expected '%v' but got '%v'", r, w)
 	}
@@ -89,7 +89,7 @@ func TestRx(t *testing.T) {
 	v := Vec4{1, 1, 0, 1}
 	m := RxMat(math.Pi)
 	r := [4]int{1, -1, 0, 1}
-	w := *m.Proj(&v)
+	w := *m.Transf(&v)
 	wi := [4]int{int(w[0]), int(w[1]), int(w[2]), int(w[3])}
 	if wi != r {
 		t.Errorf("expected '%v' but got '%v'", r, wi)
@@ -100,7 +100,7 @@ func TestRy(t *testing.T) {
 	v := Vec4{1, 1, 0, 1}
 	m := RyMat(math.Pi / 2)
 	r := [4]int{0, 1, -1, 1}
-	w := *m.Proj(&v)
+	w := *m.Transf(&v)
 	wi := [4]int{int(w[0]), int(w[1]), int(w[2]), int(w[3])}
 	if wi != r {
 		t.Errorf("expected '%v' but got '%v'", r, wi)
