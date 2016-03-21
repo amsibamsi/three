@@ -1,4 +1,4 @@
-// Render 3D graphics
+// Package graphics renders 3D graphics.
 package graphics
 
 import (
@@ -32,9 +32,8 @@ func (v *Vec3) Sub(w *Vec3) {
 	v[2] -= w[2]
 }
 
-// Cross returns the cross product of
-// this vector with the argument as new vector.
-func (v *Vec3) Cross(w *Vec3) *Vec3 {
+// Cross returns a new vector that is the cross product of the two vectors.
+func Cross(v, w *Vec3) *Vec3 {
 	return &Vec3{
 		v[1]*w[2] - v[2]*w[1],
 		v[2]*w[0] - v[0]*w[2],
@@ -172,16 +171,28 @@ type Camera struct {
 	// where the orthogonal plane is set to project onto.
 	Near float64
 
-	// Far is the maximum distance from the eye in the looking direction
-	// of objects that will be drawn. Everything further away will
-	// not be drawn.
+	// Far is the distance from the eye in the looking direction where an
+	// orthogonal plane is drawn. Everything beyond that plane is not projected.
 	Far float64
 
-	// Fovx is the horizontal field of view in radian degrees.
-	Fovx float64
+	// Fov is the horizontal field of view in radian degrees.
+	Fov float64
 
-	// Fovy is the vertical field of view in radian degrees.
-	Fovy float64
+	// Ar is the aspect ratio of width to height.
+	Ar float64
+}
+
+// NewDefCam returns a new camera with default settings.
+func NewDefCam() *Camera {
+	return &Camera{
+		Eye:  Vec3{0, 0, 0},
+		At:   Vec3{0, 0, -1},
+		Up:   Vec3{0, 1, 0},
+		Near: 1.0,
+		Far:  100.0,
+		Fov:  math.Pi / 2,
+		Ar:   1.0,
+	}
 }
 
 // CamAxes returns the 3 axes that make up the orthonormal basis
@@ -190,13 +201,11 @@ func (c *Camera) CamAxes() (*Vec3, *Vec3, *Vec3) {
 	z := c.Eye
 	z.Sub(&c.At)
 	z.Norm()
-	x := c.Up
-	x.Cross(&z)
+	x := Cross(&c.Up, &z)
 	x.Norm()
 	// Recompute up, c.Up might not be perpendicular or normalized.
-	y := z
-	y.Cross(&x)
-	return &x, &y, &z
+	y := Cross(&z, x)
+	return x, y, &z
 }
 
 // CamTransf returns a new matrix that transforms from world coordinates into
