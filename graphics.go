@@ -6,8 +6,8 @@ import (
 	"math/rand"
 )
 
-// Vec3 is a vector in 3D space with cartesian coordinates.
-// Holds 3 components: x, y and z in this order.
+// Vec3 is a vector in 3D space with cartesian coordinates. Holds 3 components:
+// x, y and z in this order.
 type Vec3 [3]float64
 
 // Norm normalizes a vector to length 1 keeping its direction.
@@ -41,20 +41,19 @@ func Cross(v, w *Vec3) *Vec3 {
 	}
 }
 
-// Vec4 is a vector in 3D space with homogeneous coordinates.
-// Holds 4 components: x, y, z and w in this order.
+// Vec4 is a vector in 3D space with homogeneous coordinates. Holds 4
+// components: x, y, z and w in this order.
 type Vec4 [4]float64
 
-// NewVec4 returns a new vector with homogeneous coordinates
-// corresponding to the given cartesian coordinates (w will be 1).
+// NewVec4 returns a new vector with homogeneous coordinates corresponding to
+// the given cartesian coordinates (w will be 1).
 func NewVec4(x, y, z float64) *Vec4 {
 	return &Vec4{x, y, z, 1}
 }
 
-// Mat4 is a matrix with homogeneous coordinates
-// used to transform homogeneous vectors.
-// Holds 16 components, the 4 first elements make up
-// the first row from left to right, and so on.
+// Mat4 is a matrix with homogeneous coordinates used to transform homogeneous
+// vectors.  Holds 16 components, the 4 first elements make up the first row
+// from left to right, and so on.
 type Mat4 [16]float64
 
 // ZeroMat returns a new matrix with all values set to zero.
@@ -76,8 +75,8 @@ func RandMat(r *rand.Rand) *Mat4 {
 	return &m
 }
 
-// TranslTransf returns a new translation matrix that
-// translates vectors by the argument vector.
+// TranslTransf returns a new translation matrix that translates vectors by the
+// argument vector.
 func TranslTransf(v *Vec3) *Mat4 {
 	return &Mat4{
 		1, 0, 0, v[0],
@@ -100,7 +99,8 @@ func (m *Mat4) Mul(n *Mat4) {
 	*m = *t
 }
 
-// Transf returns a new transformed vector by multiplying the matrix with the given vector.
+// Transf returns a new transformed vector by multiplying the matrix with the
+// given vector.
 func (m *Mat4) Transf(v *Vec4) *Vec4 {
 	p := Vec4{0, 0, 0, 0}
 	for i := 0; i < 4; i++ {
@@ -145,8 +145,8 @@ func CoordTransf(x, y, z *Vec3) *Mat4 {
 	}
 }
 
-// Camera describes a view in space.
-// It is used to create a 2D image from the scene.
+// Camera describes a view in space. It is used to create a 2D image from the
+// scene.
 //
 // The coordinate system of a camera is as follows:
 //   - Center at Eye
@@ -155,20 +155,20 @@ func CoordTransf(x, y, z *Vec3) *Mat4 {
 //   - Positive x along the cross product of y and z (to the right)
 type Camera struct {
 
-	// Eye is the position of the eye to look from.
-	// For each object to project a virtual line to the eye is drawn.
+	// Eye is the position of the eye to look from. For each object to project a
+	// virtual line to the eye is drawn.
 	Eye Vec3
 
 	// At is the direction to look at from the eye.
 	At Vec3
 
-	// Up determines the orientation of the view.
-	// Up not being perpendicular to At results in the same orientation as if Up
-	// was first projected to the normal plane of At through Eye.
+	// Up determines the orientation of the view. Up not being perpendicular to
+	// At results in the same orientation as if Up was first projected to the
+	// normal plane of At through Eye.
 	Up Vec3
 
-	// Near is the distance from the eye in the looking direction
-	// where the orthogonal plane is set to project onto.
+	// Near is the distance from the eye in the looking direction where the
+	// orthogonal plane is set to project onto.
 	Near float64
 
 	// Far is the distance from the eye in the looking direction where an
@@ -195,8 +195,8 @@ func NewDefCam() *Camera {
 	}
 }
 
-// CamAxes returns the 3 axes that make up the orthonormal basis
-// of the cameras right-handed coordinate system.
+// CamAxes returns the 3 axes that make up the orthonormal basis of the cameras
+// right-handed coordinate system.
 func (c *Camera) CamAxes() (*Vec3, *Vec3, *Vec3) {
 	z := c.Eye
 	z.Sub(&c.At)
