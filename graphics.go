@@ -111,30 +111,19 @@ func (m *Mat4) Transf(v *Vec4) *Vec4 {
 	return &p
 }
 
-// CoordTransf returns a new matrix that transforms vectors to a new basis with
-// axes specified as x, y, z arguments which must be orthonormal.
+// CoordTransf returns a new matrix that transforms from the orthonormal basis
+// given by the 3 argument axes to the standard basis. It is used to to
+// transform vectors from the world to the camera view.
 //
 // Reference is the standard basis with the axes (1,0,0), (0,1,0) and (0,0,1).
-// A new basis is formed from the argument axes given in standard coordinates.
-// Any vector in the standard basis is interpreted as seen by the new basis
-// and its coordinates are transformed to this new basis. This corresponds to
-// the inverse transformation of the standard basis into the new basis. We
-// see a vector through the view of the new basis, transform both back to the
-// standard basis and get the standard coordinates of the vector as seen by
-// the new basis.
-//
-// Transforming from the standard basis into the new basis is just a matter of
-// writing the standard coordinates of a vector as linear combination of the
-// new axes. E.g. a vector (v0,v1,v2) can be written as v0 * (1,0,0) + v1 *
-// (0,1,0) + v2 * (0,0,1) in the standard basis. And in the new basis with
-// axes (a0,a1,a2), (b0,b1,b2) and (c0,c1,c2) as v0 * (a0,a1,a2) + v1 *
-// (b0,b1,b2) + v2 * (c0,c1,c2). So the x coordinate of the new vector is
-// v0*a0 + v1*b0 + v2*c0 and similar for y and z coordinates. Thus the 3 new
-// basis vectors make up the columns of the transformation matrix. The final
-// matrix is then the inverted transformation, so the transposed matrix where
-// the axes of the new bases are the rows, since we want to transform vectors
-// as seen by the new basis back to the standard basis to get the standard
-// coordinates. Finally we fill up the matrix with 0 an 1 to make it
+// A new basis is formed from the argument axes given in standard coordinates. A
+// vector is also given in standard coordinates but interpreted in the view of
+// the argument basis. The origin is the same for both bases. Instead of
+// rotating we can also project any vector onto the new basis: E.g. the x
+// coordinate of a vector (vx,vy,vz) in the new basis with x axis (ax,ay,az) is
+// the dot product vx*ax + vy*ay + vz*az. The same is true for y and z
+// coordinates. So the transformation is a matrix where the axes of the argument
+// basis are the rows of the matrix. We fill up with 0 and 1 to make the matrix
 // homogeneous.
 func CoordTransf(x, y, z *Vec3) *Mat4 {
 	return &Mat4{
@@ -195,7 +184,7 @@ func NewDefCam() *Camera {
 	}
 }
 
-// CamAxes returns the 3 axes that make up the orthonormal basis of the cameras
+// CamAxes returns the 3 axes that make up the orthonormal basis of the camera's
 // right-handed coordinate system.
 func (c *Camera) CamAxes() (*Vec3, *Vec3, *Vec3) {
 	z := c.Eye
@@ -203,16 +192,21 @@ func (c *Camera) CamAxes() (*Vec3, *Vec3, *Vec3) {
 	z.Norm()
 	x := Cross(&c.Up, &z)
 	x.Norm()
-	// Recompute up, c.Up might not be perpendicular or normalized.
+	// Recompute up, c.Up might not be perpendicular or normalized
 	y := Cross(&z, x)
 	return x, y, &z
 }
 
 // CamTransf returns a new matrix that transforms from world coordinates into
-// view coordinates of the camera. It is the inverse transformation of getting
-// from the world view (defined as x to the right, y up and looking down -z)
-// to the camera view. That means first translating the eye of the camera to
-// the origin and then rotating the camera to match the world view.
+// view coordinates of the camera. Any object in world coordinates is viewed
+// through the camera that is also given in world coordinates. To get the
+// objects's camera coordinates we transform the camera coordinate system to
+// match the world coordinate system. Any object we transform the same way and
+// get standard coordinates relative to the camera view. It is the inverse
+// transformation of getting from the world view to the camera view. That means
+// we first translate the eye of the camera to the origin and then rotate the
+// camera until it matches the world view. Instead of rotating we can use the
+// coordinate transformation function CoordTransf.
 func (c *Camera) CamTransf() *Mat4 {
 	x, y, z := c.CamAxes()
 	m := CoordTransf(x, y, z)
