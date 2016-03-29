@@ -181,6 +181,41 @@ func TestCamTransf(t *testing.T) {
 	}
 }
 
+func TestPerspTransf(t *testing.T) {
+	c := Camera{
+		Near: 3,
+	}
+	m := c.PerspTransf()
+	r := Mat4{
+		3, 0, 0, 0,
+		0, 3, 0, 0,
+		0, 0, 3, 0,
+		0, 0, -1, 0,
+	}
+	if *m != r {
+		t.Errorf("expected '%v' but got '%v'", r, *m)
+	}
+}
+
+func TestFrustum(t *testing.T) {
+	c := Camera{
+		Near: 2,
+		Far:  12,
+		Fov:  math.Pi / 2,
+		Ar:   2,
+	}
+	f := c.Frustum()
+	r := Frustum{
+		Nwidth:  4,
+		Nheight: 2,
+		Fwidth:  24,
+		Fheight: 12,
+	}
+	if *f != r {
+		t.Errorf("expected '%v' but got '%v'", r, *f)
+	}
+}
+
 func BenchmarkMul(b *testing.B) {
 	r := rand.New(rand.NewSource(0))
 	m := RandMat(r)

@@ -76,7 +76,7 @@ func RandMat(r *rand.Rand) *Mat4 {
 }
 
 // TranslTransf returns a new translation matrix that translates vectors by the
-// argument vector.
+// argument vector. Will only work if vector has w=1.
 func TranslTransf(v *Vec3) *Mat4 {
 	return &Mat4{
 		1, 0, 0, v[0],
@@ -216,3 +216,68 @@ func (c *Camera) CamTransf() *Mat4 {
 	m.Mul(t)
 	return m
 }
+
+// PerspTransf returns a new matrix that does a perspective transformation by
+// projecting on the near plane of the camera. The z coordinate becomes -c.Near
+// and x, y are multiplied by -c.Near/z. -z is factored out as the homogeneous
+// part.
+func (c *Camera) PerspTransf() *Mat4 {
+	n := c.Near
+	return &Mat4{
+		n, 0, 0, 0,
+		0, n, 0, 0,
+		0, 0, n, 0,
+		0, 0, -1, 0,
+	}
+}
+
+// Frustum is the shape formed by the camera that determines what objects are
+// visible and how they are perspectively projected. It is formed by two
+// perpendicular rectangles with centers on a line. The near rectangle is on the
+// camera's near plane and corresponds to the projection screen. The far
+// rectangle is on the far plane and determines how far the camera can see.
+type Frustum struct {
+
+	// Nwidth is the width of the near rectangle
+	Nwidth float64
+
+	// Nheight is the height of the near rectangle
+	Nheight float64
+
+	// Fwidth is the width of the far retangle
+	Fwidth float64
+
+	// Fheight ist the height of the far rectangle
+	Fheight float64
+}
+
+// Frustum returns the camera's frustum.
+func (c *Camera) Frustum() *Frustum {
+	s := math.Sin(c.Fov)
+	n := c.Near
+	f := c.Far
+	ar := c.Ar
+	nw := 2 * s * n
+	nh := nw / ar
+	fw := 2 * s * f
+	fh := fw / ar
+	return &Frustum{nw, nh, fw, fh}
+}
+
+// ScreenTransf returns a new matrix that transforms vectors from camera to
+// screen coordinates. The upper left corner of the near rectangle will be
+// (0,0) and the bottom right (width,height). If the aspect ratio does not match
+// the camera the image will be distorted.
+//func (c *Camera) ScreenTransf(width, height int) *Mat4 {
+//	f := c.Frustum()
+//	// Broken: translation won't work if w != 1
+//	t := TranslTransf(&Vec3{width / 2, -height / 2, 0})
+//	m := Mat4{
+//		width / f.Nwidth, 0, 0, 0,
+//		0, height / f.Nheight, 0, 0,
+//		0, 0, 1, 0,
+//		0, 0, 0, 1,
+//	}
+//	m.Mul(t)
+//	return &m
+//}
