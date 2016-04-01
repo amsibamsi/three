@@ -273,21 +273,48 @@ func (c *Camera) Frustum() *Frustum {
 	return &Frustum{nw, nh, fw, fh}
 }
 
+// Screen is a rectangular screen to render an image on. The origin is in the
+// upper left (0,0) and it extends to the right bottom.
+type Screen struct {
+
+	// Width of the screen in pixels
+	Width int
+
+	// Height of the screen in pixels
+	Height int
+}
+
 // ScreenTransf returns a new matrix that transforms vectors after projection
 // to screen coordinates. The upper left corner of the near rectangle will be
 // (0,0) and the bottom right will be (width,height). If the aspect ratio does
 // not match the camera the image will be distorted. It needs the frustum of
-// the camera and width/height of the screen in pixels.
-func ScreenTransf(f *Frustum, w, h int) *Mat4 {
-	wf := float64(w)
-	hf := float64(h)
+// the camera and a screen as arguments.
+func ScreenTransf(f *Frustum, s *Screen) *Mat4 {
+	w := float64(s.Width)
+	h := float64(s.Height)
 	t := TranslTransf(&Vec3{f.Nwidth / 2, -f.Nheight / 2, 0})
 	m := Mat4{
-		wf / f.Nwidth, 0, 0, 0,
-		0, -hf / f.Nheight, 0, 0,
+		w / f.Nwidth, 0, 0, 0,
+		0, -h / f.Nheight, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1,
 	}
 	m.Mul(t)
 	return &m
+}
+
+// PerspTransf returns a new matrix that transforms vectors from world
+// coordinates to screen coordinates.
+//
+// The matrix is constructed by multiplying the following transformation
+// matrices (last is applied first in transformation):
+//   - screen transformation
+//   - perspective transformation
+//   - camera transformation
+func (c *Camera) PerspTransf(s *Screen) *Mat4 {
+	f := c.Frustum()
+	m := ScreenTransf(f, s)
+	m.Mul(c.ProjTransf())
+	m.Mul(c.CamTransf())
+	return m
 }
