@@ -45,6 +45,15 @@ func Cross(v, w *Vec3) *Vec3 {
 // components: x, y, z and w in this order.
 type Vec4 [4]float64
 
+// Norm normalizes a homogeneous vector by dividing x, y and z by w so that w
+// will be 1.
+func (v *Vec4) Norm() {
+	v[0] /= v[3]
+	v[1] /= v[3]
+	v[2] /= v[3]
+	v[3] = 1.0
+}
+
 // NewVec4 returns a new vector with homogeneous coordinates corresponding to
 // the given cartesian coordinates (w will be 1).
 func NewVec4(x, y, z float64) *Vec4 {
@@ -76,7 +85,7 @@ func RandMat(r *rand.Rand) *Mat4 {
 }
 
 // TranslTransf returns a new translation matrix that translates vectors by the
-// argument vector. Will only work if vector has w=1.
+// argument vector.
 func TranslTransf(v *Vec3) *Mat4 {
 	return &Mat4{
 		1, 0, 0, v[0],
@@ -116,15 +125,15 @@ func (m *Mat4) Transf(v *Vec4) *Vec4 {
 // transform vectors from the world to the camera view.
 //
 // Reference is the standard basis with the axes (1,0,0), (0,1,0) and (0,0,1).
-// A new basis is formed from the argument axes given in standard coordinates. A
-// vector is also given in standard coordinates but interpreted in the view of
-// the argument basis. The origin is the same for both bases. Instead of
+// A new basis is formed from the argument axes given in standard coordinates.
+// A vector is also given in standard coordinates but interpreted in the view
+// of the argument basis. The origin is the same for both bases. Instead of
 // rotating we can also project any vector onto the new basis: E.g. the x
 // coordinate of a vector (vx,vy,vz) in the new basis with x axis (ax,ay,az) is
 // the dot product vx*ax + vy*ay + vz*az. The same is true for y and z
-// coordinates. So the transformation is a matrix where the axes of the argument
-// basis are the rows of the matrix. We fill up with 0 and 1 to make the matrix
-// homogeneous.
+// coordinates. So the transformation is a matrix where the axes of the
+// argument basis are the rows of the matrix. We fill up with 0 and 1 to make
+// the matrix homogeneous.
 func CoordTransf(x, y, z *Vec3) *Mat4 {
 	return &Mat4{
 		x[0], x[1], x[2], 0,
@@ -184,8 +193,8 @@ func NewDefCam() *Camera {
 	}
 }
 
-// CamAxes returns the 3 axes that make up the orthonormal basis of the camera's
-// right-handed coordinate system.
+// CamAxes returns the 3 axes that make up the orthonormal basis of the
+// camera's right-handed coordinate system.
 func (c *Camera) CamAxes() (*Vec3, *Vec3, *Vec3) {
 	z := c.Eye
 	z.Sub(&c.At)
@@ -217,11 +226,11 @@ func (c *Camera) CamTransf() *Mat4 {
 	return m
 }
 
-// PerspTransf returns a new matrix that does a perspective transformation by
+// ProjTransf returns a new matrix that does the perspective transformation by
 // projecting on the near plane of the camera. The z coordinate becomes -c.Near
 // and x, y are multiplied by -c.Near/z. -z is factored out as the homogeneous
 // part.
-func (c *Camera) PerspTransf() *Mat4 {
+func (c *Camera) ProjTransf() *Mat4 {
 	n := c.Near
 	return &Mat4{
 		n, 0, 0, 0,
@@ -233,8 +242,8 @@ func (c *Camera) PerspTransf() *Mat4 {
 
 // Frustum is the shape formed by the camera that determines what objects are
 // visible and how they are perspectively projected. It is formed by two
-// perpendicular rectangles with centers on a line. The near rectangle is on the
-// camera's near plane and corresponds to the projection screen. The far
+// perpendicular rectangles with centers on a line. The near rectangle is on
+// the camera's near plane and corresponds to the projection screen. The far
 // rectangle is on the far plane and determines how far the camera can see.
 type Frustum struct {
 
@@ -264,20 +273,21 @@ func (c *Camera) Frustum() *Frustum {
 	return &Frustum{nw, nh, fw, fh}
 }
 
-// ScreenTransf returns a new matrix that transforms vectors from camera to
-// screen coordinates. The upper left corner of the near rectangle will be
-// (0,0) and the bottom right (width,height). If the aspect ratio does not match
-// the camera the image will be distorted.
-//func (c *Camera) ScreenTransf(width, height int) *Mat4 {
-//	f := c.Frustum()
-//	// Broken: translation won't work if w != 1
-//	t := TranslTransf(&Vec3{width / 2, -height / 2, 0})
-//	m := Mat4{
-//		width / f.Nwidth, 0, 0, 0,
-//		0, height / f.Nheight, 0, 0,
-//		0, 0, 1, 0,
-//		0, 0, 0, 1,
-//	}
-//	m.Mul(t)
-//	return &m
-//}
+// ScreenTransf returns a new matrix that transforms vectors after projection
+// to screen coordinates. The upper left corner of the near rectangle will be
+// (0,0) and the bottom right will be (width,height). If the aspect ratio does
+// not match the camera the image will be distorted. It needs the frustum of
+// the camera and width/height of the screen in pixels.
+func ScreenTransf(f *Frustum, w, h int) *Mat4 {
+	wf := float64(w)
+	hf := float64(h)
+	t := TranslTransf(&Vec3{f.Nwidth / 2, -f.Nheight / 2, 0})
+	m := Mat4{
+		wf / f.Nwidth, 0, 0, 0,
+		0, -hf / f.Nheight, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
+	}
+	m.Mul(t)
+	return &m
+}

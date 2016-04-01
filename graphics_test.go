@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestNorm(t *testing.T) {
+func TestNorm3(t *testing.T) {
 	v := Vec3{10, 0, 0}
 	r := Vec3{1, 0, 0}
 	v.Norm()
@@ -50,6 +50,15 @@ func TestCross(t *testing.T) {
 func TestNewVec4(t *testing.T) {
 	v := *NewVec4(1, 2, 3)
 	r := Vec4{1, 2, 3, 1}
+	if v != r {
+		t.Errorf("expected '%v' but got '%v'", r, v)
+	}
+}
+
+func TestNorm4(t *testing.T) {
+	v := Vec4{2, 4, 12, 2}
+	r := Vec4{1, 2, 6, 1}
+	v.Norm()
 	if v != r {
 		t.Errorf("expected '%v' but got '%v'", r, v)
 	}
@@ -181,11 +190,11 @@ func TestCamTransf(t *testing.T) {
 	}
 }
 
-func TestPerspTransf(t *testing.T) {
+func TestProjTransf(t *testing.T) {
 	c := Camera{
 		Near: 3,
 	}
-	m := c.PerspTransf()
+	m := c.ProjTransf()
 	r := Mat4{
 		3, 0, 0, 0,
 		0, 3, 0, 0,
@@ -213,6 +222,34 @@ func TestFrustum(t *testing.T) {
 	}
 	if *f != r {
 		t.Errorf("expected '%v' but got '%v'", r, *f)
+	}
+}
+
+func TestScreenTransf1(t *testing.T) {
+	f := Frustum{
+		Nwidth:  10,
+		Nheight: 10,
+	}
+	m := *ScreenTransf(&f, 100, 100)
+	v := Vec4{-10, 10, 2, 2}
+	w := *m.Transf(&v)
+	r := Vec4{0, 0, 2, 2}
+	if w != r {
+		t.Errorf("expected '%v' but got '%v'", r, w)
+	}
+}
+
+func TestScreenTransf2(t *testing.T) {
+	f := Frustum{
+		Nwidth:  10,
+		Nheight: 10,
+	}
+	m := *ScreenTransf(&f, 100, 100)
+	v := Vec4{-5, 5, 2, 2}
+	w := *m.Transf(&v)
+	r := Vec4{50, 50, 2, 2}
+	if w != r {
+		t.Errorf("expected '%v' but got '%v'", r, w)
 	}
 }
 
