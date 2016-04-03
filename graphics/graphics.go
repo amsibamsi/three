@@ -2,9 +2,18 @@
 package graphics
 
 import (
+	"image"
+	"image/color"
+	"image/jpeg"
 	"math"
 	"math/rand"
+	"os"
 )
+
+// Round returns the rounded integer for a float.
+func Round(f float64) int {
+	return int(math.Floor(f + 0.5))
+}
 
 // Vec3 is a vector in 3D space with cartesian coordinates. Holds 3 components:
 // x, y and z in this order.
@@ -317,4 +326,63 @@ func (c *Camera) PerspTransf(s *Screen) *Mat4 {
 	m.Mul(c.ProjTransf())
 	m.Mul(c.CamTransf())
 	return m
+}
+
+// Image is a simple 2D image. It wraps an RGBA image from the standard image
+// package.
+type Image struct {
+	Rgba image.RGBA
+}
+
+// NewImage returns a new image with the given width and height.
+func NewImage(w, h int) *Image {
+	return &Image{*image.NewRGBA(image.Rect(0, 0, w, h))}
+}
+
+// DrawDot draws a clearly visible dot (more than 1 pixel) at the given
+// point with the given color.
+func (img *Image) DrawDot(p image.Point, c color.Color) {
+	r := img.Rgba
+	r.Set(p.X, p.Y, c)
+	r.Set(p.X-1, p.Y, c)
+	r.Set(p.X, p.Y-1, c)
+	r.Set(p.X+1, p.Y, c)
+	r.Set(p.X, p.Y+1, c)
+}
+
+// DrawLine draws a 1 pixel thick line between the points P and Q with the
+// given color.
+func (img *Image) DrawLine(p, q image.Point, c color.Color) {
+	r := img.Rgba
+	// Always draw from left to right
+	if p.X > q.X {
+		p, q = q, p
+	}
+	x1 := float64(p.X)
+	y1 := float64(p.Y)
+	x2 := float64(q.X)
+	y2 := float64(q.Y)
+	dy := (y2 - y1) / (x2 - x1)
+	y := y1
+	for x := x1; x <= x2; x++ {
+		r.Set(Round(x), Round(y), c)
+		y += dy
+		// If the line is very steep then multiple y pixels per x must be drawn
+		// BROKEN
+		for yi := y; yi <= y; yi++ {
+			r.Set(Round(x), Round(yi), c)
+		}
+	}
+}
+
+// WriteJpeg stores the image in JPEG format to the given file. It returns the
+// error from os.Create() if any.
+func (img *Image) WriteJpeg(filename string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	jpeg.Encode(file, &img.Rgba, &jpeg.Options{Quality: 100})
+	return nil
 }
