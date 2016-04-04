@@ -5,10 +5,16 @@ import (
 	"image"
 	"image/color"
 	"image/jpeg"
+	"io"
 	"math"
 	"math/rand"
-	"os"
 )
+
+// Abs returns the absolute value of an integer.
+func Abs(i int) int {
+	m := i >> 31
+	return (m ^ i) - m
+}
 
 // Round returns the rounded integer for a float.
 func Round(f float64) int {
@@ -354,35 +360,30 @@ func (img *Image) DrawDot(p image.Point, c color.Color) {
 // given color.
 func (img *Image) DrawLine(p, q image.Point, c color.Color) {
 	r := img.Rgba
-	// Always draw from left to right
+	// Always draw from left to right (p.X < q.X)
 	if p.X > q.X {
 		p, q = q, p
 	}
-	x1 := float64(p.X)
-	y1 := float64(p.Y)
-	x2 := float64(q.X)
-	y2 := float64(q.Y)
-	dy := (y2 - y1) / (x2 - x1)
-	y := y1
-	for x := x1; x <= x2; x++ {
+	dx := q.X - p.X
+	dy := q.Y - p.Y
+	var steps int
+	if dx > dy {
+		steps = Abs(dx)
+	} else {
+		steps = Abs(dy)
+	}
+	xinc := float64(dx) / float64(steps)
+	yinc := float64(dy) / float64(steps)
+	x := float64(p.X)
+	y := float64(p.Y)
+	for s := 0; s < steps; s++ {
 		r.Set(Round(x), Round(y), c)
-		y += dy
-		// If the line is very steep then multiple y pixels per x must be drawn
-		// BROKEN
-		for yi := y; yi <= y; yi++ {
-			r.Set(Round(x), Round(yi), c)
-		}
+		x += xinc
+		y += yinc
 	}
 }
 
-// WriteJpeg stores the image in JPEG format to the given file. It returns the
-// error from os.Create() if any.
-func (img *Image) WriteJpeg(filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	jpeg.Encode(file, &img.Rgba, &jpeg.Options{Quality: 100})
-	return nil
+// WriteJpeg stores the image in JPEG format to the given writer.
+func (img *Image) WriteJpeg(w io.Writer) {
+	jpeg.Encode(w, &img.Rgba, &jpeg.Options{Quality: 100})
 }

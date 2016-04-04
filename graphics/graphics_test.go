@@ -9,6 +9,42 @@ import (
 	"testing"
 )
 
+func TestAbs1(t *testing.T) {
+	i := -13
+	a := Abs(i)
+	r := 13
+	if a != r {
+		t.Errorf("expected '%v' but got '%v'", r, a)
+	}
+}
+
+func TestAbs2(t *testing.T) {
+	i := 123456
+	a := Abs(i)
+	r := 123456
+	if a != r {
+		t.Errorf("expected '%v' but got '%v'", r, a)
+	}
+}
+
+func TestRound1(t *testing.T) {
+	f := 123.4999999
+	g := Round(f)
+	r := 123
+	if g != r {
+		t.Errorf("expected '%v' but got '%v'", r, g)
+	}
+}
+
+func TestRound2(t *testing.T) {
+	f := 0.5000000000
+	g := Round(f)
+	r := 1
+	if g != r {
+		t.Errorf("expected '%v' but got '%v'", r, g)
+	}
+}
+
 func TestNorm3(t *testing.T) {
 	v := Vec3{10, 0, 0}
 	r := Vec3{1, 0, 0}
