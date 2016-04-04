@@ -367,7 +367,7 @@ func (img *Image) DrawLine(p, q image.Point, c color.Color) {
 	dx := q.X - p.X
 	dy := q.Y - p.Y
 	var steps int
-	if dx > dy {
+	if Abs(dx) > Abs(dy) {
 		steps = Abs(dx)
 	} else {
 		steps = Abs(dy)
