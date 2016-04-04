@@ -349,11 +349,22 @@ func NewImage(w, h int) *Image {
 // point with the given color.
 func (img *Image) DrawDot(p image.Point, c color.Color) {
 	r := img.Rgba
-	r.Set(p.X, p.Y, c)
-	r.Set(p.X-1, p.Y, c)
-	r.Set(p.X, p.Y-1, c)
-	r.Set(p.X+1, p.Y, c)
-	r.Set(p.X, p.Y+1, c)
+	ind := []int{
+		-2, 0,
+		-1, -1,
+		-1, 0,
+		-1, 1,
+		0, -1,
+		0, 0,
+		0, 1,
+		1, -1,
+		1, 0,
+		1, 1,
+		2, 0,
+	}
+	for i := 0; i < len(ind); i += 2 {
+		r.Set(p.X+ind[i], p.Y+ind[i+1], c)
+	}
 }
 
 // DrawLine draws a 1 pixel thick line between the points P and Q with the
