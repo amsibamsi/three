@@ -4,7 +4,6 @@ package main
 import (
 	"flag"
 	"github.com/amsibamsi/3d/graphics"
-	"image"
 	"image/color"
 	"os"
 )
@@ -19,16 +18,20 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	i := graphics.NewImage(500, 500)
+	s := graphics.Screen{500, 500}
+	i := graphics.NewImage(&s)
 	c := color.RGBA{255, 255, 0, 255}
-	p := image.Point{250, 10}
-	q := image.Point{490, 490}
-	r := image.Point{10, 490}
-	i.DrawDot(p, c)
-	i.DrawDot(q, c)
-	i.DrawDot(r, c)
-	i.DrawLine(p, q, c)
-	i.DrawLine(q, r, c)
-	i.DrawLine(r, p, c)
+	x1 := 250
+	y1 := 10
+	x2 := 490
+	y2 := 490
+	x3 := 10
+	y3 := 490
+	i.DrawDot(x1, y1, c)
+	i.DrawDot(x2, y2, c)
+	i.DrawDot(x3, y3, c)
+	i.DrawLine(x1, y1, x2, y2, c)
+	i.DrawLine(x2, y2, x3, y3, c)
+	i.DrawLine(x3, y3, x1, y1, c)
 	i.WriteJpeg(file)
 }
