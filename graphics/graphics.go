@@ -288,7 +288,7 @@ func (c *Camera) Frustum() *Frustum {
 	return &Frustum{nw, nh, fw, fh}
 }
 
-// Screen is a rectangular screen to render an image on. The origin is in the
+// Screen is the rectangular area to render an image on. The origin is in the
 // upper left (0,0) and it extends to the right bottom.
 type Screen struct {
 
@@ -340,14 +340,16 @@ type Image struct {
 	Rgba image.RGBA
 }
 
-// NewImage returns a new image with the given width and height.
-func NewImage(w, h int) *Image {
-	return &Image{*image.NewRGBA(image.Rect(0, 0, w, h))}
+// NewImage returns a new image with the given screen width and height.
+func NewImage(s *Screen) *Image {
+	rect := image.Rect(0, 0, s.Width, s.Height)
+	rgba := *image.NewRGBA(rect)
+	return &Image{rgba}
 }
 
-// DrawDot draws a clearly visible dot (more than 1 pixel) at the given
-// point with the given color.
-func (img *Image) DrawDot(p image.Point, c color.Color) {
+// DrawDot draws a clearly visible dot (more than 1 pixel) at (x,y) with the
+// given color.
+func (img *Image) DrawDot(x, y int, c color.Color) {
 	r := img.Rgba
 	ind := []int{
 		-2, 0,
@@ -363,20 +365,20 @@ func (img *Image) DrawDot(p image.Point, c color.Color) {
 		2, 0,
 	}
 	for i := 0; i < len(ind); i += 2 {
-		r.Set(p.X+ind[i], p.Y+ind[i+1], c)
+		r.Set(x+ind[i], y+ind[i+1], c)
 	}
 }
 
-// DrawLine draws a 1 pixel thick line between the points P and Q with the
+// DrawLine draws a 1 pixel thick line between the (x1,y1) and (x2,y2) with the
 // given color.
-func (img *Image) DrawLine(p, q image.Point, c color.Color) {
+func (img *Image) DrawLine(x1, y1, x2, y2 int, c color.Color) {
 	r := img.Rgba
-	// Always draw from left to right (p.X < q.X)
-	if p.X > q.X {
-		p, q = q, p
+	// Always draw from left to right (x1 <= x2)
+	if x1 > x2 {
+		x1, y1, x2, y2 = x2, y2, x1, y1
 	}
-	dx := q.X - p.X
-	dy := q.Y - p.Y
+	dx := x2 - x1
+	dy := y2 - y1
 	var steps int
 	if Abs(dx) > Abs(dy) {
 		steps = Abs(dx)
@@ -385,8 +387,8 @@ func (img *Image) DrawLine(p, q image.Point, c color.Color) {
 	}
 	xinc := float64(dx) / float64(steps)
 	yinc := float64(dy) / float64(steps)
-	x := float64(p.X)
-	y := float64(p.Y)
+	x := float64(x1)
+	y := float64(y1)
 	for s := 0; s < steps; s++ {
 		r.Set(Round(x), Round(y), c)
 		x += xinc
