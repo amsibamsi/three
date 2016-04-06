@@ -4,7 +4,8 @@ package graphics
 import (
 	"image"
 	"image/color"
-	"image/jpeg"
+	"image/draw"
+	"image/png"
 	"io"
 	"math"
 	"math/rand"
@@ -340,11 +341,14 @@ type Image struct {
 	Rgba image.RGBA
 }
 
-// NewImage returns a new image with the given screen width and height.
+// NewImage returns a new image with the given screen width and height and
+// black background.
 func NewImage(s *Screen) *Image {
 	rect := image.Rect(0, 0, s.Width, s.Height)
-	rgba := *image.NewRGBA(rect)
-	return &Image{rgba}
+	rgba := image.NewRGBA(rect)
+	bg := image.Uniform{color.Black}
+	draw.Draw(rgba, rgba.Bounds(), &bg, image.Point{}, draw.Src)
+	return &Image{*rgba}
 }
 
 // DrawDot draws a clearly visible dot (more than 1 pixel) at (x,y) with the
@@ -396,7 +400,8 @@ func (img *Image) DrawLine(x1, y1, x2, y2 int, c color.Color) {
 	}
 }
 
-// WriteJpeg stores the image in JPEG format to the given writer.
-func (img *Image) WriteJpeg(w io.Writer) {
-	jpeg.Encode(w, &img.Rgba, &jpeg.Options{Quality: 100})
+// WritePng stores the image in PNG format to the given writer and returns the
+// error from png.Encode() if any.
+func (img *Image) WritePng(w io.Writer) error {
+	return png.Encode(w, &img.Rgba)
 }

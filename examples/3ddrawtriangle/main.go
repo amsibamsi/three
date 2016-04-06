@@ -1,4 +1,4 @@
-// Package main draws a simple triangle and stores it as JPEG file.
+// Package main draws a simple triangle and stores it in a file.
 package main
 
 import (
@@ -9,9 +9,9 @@ import (
 )
 
 // main creates a new image, draws 3 dots and 3 lines onto the image, and then
-// encodes the image as JPEG into a file. Optionally specify the filename.
+// encodes the image as PNG into a file. Optionally specify the filename.
 func main() {
-	var filename = flag.String("file", "triangle.jpg", "Filename to store image")
+	var filename = flag.String("file", "triangle.png", "Filename to store image")
 	flag.Parse()
 	file, err := os.Create(*filename)
 	if err != nil {
@@ -33,5 +33,5 @@ func main() {
 	i.DrawLine(x1, y1, x2, y2, c)
 	i.DrawLine(x2, y2, x3, y3, c)
 	i.DrawLine(x3, y3, x1, y1, c)
-	i.WriteJpeg(file)
+	i.WritePng(file)
 }

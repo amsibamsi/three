@@ -1,4 +1,4 @@
-// Package main renders a simple triangle and stores it as JPEG file.
+// Package main renders a simple triangle and stores it in a file.
 package main
 
 import (
@@ -9,10 +9,10 @@ import (
 )
 
 // main creates a new scene with a camera and 3 vectors, renders the scene,
-// draws the result to an image and encodes the image as JPEG into a file.
+// draws the result to an image and encodes the image as PNG into a file.
 // Optionally specify the filename.
 func main() {
-	var filename = flag.String("file", "triangle.jpg", "Filename to store image")
+	var filename = flag.String("file", "triangle.png", "Filename to store image")
 	flag.Parse()
 	scr := graphics.Screen{500, 500}
 	cam := graphics.NewDefCam()
@@ -45,5 +45,5 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	img.WriteJpeg(file)
+	img.WritePng(file)
 }
