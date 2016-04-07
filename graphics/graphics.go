@@ -393,7 +393,7 @@ func (img *Image) DrawLine(x1, y1, x2, y2 int, c color.Color) {
 	yinc := float64(dy) / float64(steps)
 	x := float64(x1)
 	y := float64(y1)
-	for s := 0; s < steps; s++ {
+	for s := 0; s <= steps; s++ {
 		r.Set(Round(x), Round(y), c)
 		x += xinc
 		y += yinc
