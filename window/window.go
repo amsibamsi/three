@@ -18,10 +18,10 @@ import (
 	"unsafe"
 )
 
-// InitGlfw initializes GLFW. Returns a generic error if initialization failed.
+// Init initializes GLFW. Returns a generic error if initialization failed.
 // The error will be printed to stderr via a callback function. Initializes
 // OpenGL in version 2.1. Should only be called once before creating a window.
-func InitGlfw() error {
+func Init() error {
 	C.setGlfwErrorCallback()
 	if C.glfwInit() != C.GL_TRUE {
 		return errors.New("Failed to initialize GLFW")
@@ -41,20 +41,6 @@ func GlfwError(error C.int, description *C.char) {
 		"GLFW error %d: %s\n",
 		int(error), C.GoString(description),
 	)
-}
-
-// InitGlew initializes GLEW. Returns an error with the error string from GLEW
-// if initialization failed. Should only be called once before drawing on a
-// window.
-func InitGlew() error {
-	C.glewExperimental = C.GL_TRUE
-	err := C.glewInit()
-	if err != C.GLEW_OK {
-		errstr := (*C.char)(unsafe.Pointer(C.glewGetErrorString(err)))
-		msg := fmt.Sprintf("Failed to initialize GLEW: %s", C.GoString(errstr))
-		return errors.New(msg)
-	}
-	return nil
 }
 
 //
@@ -93,11 +79,19 @@ func NewWindow(w, h int, t string) (*Window, error) {
 	C.glGenTextures(1, &texId)
 	tex := make([]byte, 3*w*h)
 	window := Window{C.GLsizei(w), C.GLsizei(h), glfwWin, texId, tex}
+	C.glfwMakeContextCurrent(glfwWin)
+	C.glewExperimental = C.GL_TRUE
+	err := C.glewInit()
+	if err != C.GLEW_OK {
+		errstr := (*C.char)(unsafe.Pointer(C.glewGetErrorString(err)))
+		msg := fmt.Sprintf("Failed to initialize GLEW: %s", C.GoString(errstr))
+		return nil, errors.New(msg)
+	}
 	return &window, nil
 }
 
 //
-func (w *Window) DrawTex() {
+func (w *Window) Draw() {
 	C.glfwMakeContextCurrent(w.GlfwWin)
 	C.glPixelStorei(C.GL_UNPACK_ALIGNMENT, 1)
 	C.glPixelStorei(C.GL_PACK_ALIGNMENT, 1)
@@ -134,4 +128,25 @@ func (w *Window) DrawTex() {
 	C.glVertex2f(-1.0, 1.0)
 	C.glEnd()
 	C.glfwSwapBuffers(w.GlfwWin)
+}
+
+//
+func (w *Window) Destroy() {
+	C.glfwDestroyWindow(w.GlfwWin)
+}
+
+//
+func (w *Window) ShouldClose() bool {
+	should := C.glfwWindowShouldClose(w.GlfwWin)
+	return should != 0
+}
+
+//
+func PollEvents() {
+	C.glfwPollEvents()
+}
+
+//
+func Terminate() {
+	C.glfwTerminate()
 }
