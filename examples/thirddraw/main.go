@@ -1,9 +1,10 @@
-// Package main draws a simple triangle and stores it in a file.
+// Package main contains an example program that draws a simple triangle and
+// stores it in a file.
 package main
 
 import (
 	"flag"
-	"github.com/amsibamsi/3d/graphics"
+	"github.com/amsibamsi/third"
 	"image/color"
 	"os"
 )
@@ -18,8 +19,8 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	s := graphics.Screen{500, 500}
-	i := graphics.NewImage(&s)
+	s := third.Screen{500, 500}
+	i := third.NewImage(&s)
 	c := color.RGBA{255, 255, 0, 255}
 	x1 := 250
 	y1 := 10

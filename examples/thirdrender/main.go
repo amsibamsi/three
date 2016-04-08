@@ -1,9 +1,10 @@
-// Package main renders a simple triangle and stores it in a file.
+// Package main contains an example program that renders a simple triangle and
+// stores it in a file.
 package main
 
 import (
 	"flag"
-	"github.com/amsibamsi/3d/graphics"
+	"github.com/amsibamsi/third"
 	"image/color"
 	"os"
 )
@@ -14,11 +15,11 @@ import (
 func main() {
 	var filename = flag.String("file", "triangle.png", "Filename to store image")
 	flag.Parse()
-	scr := graphics.Screen{500, 500}
-	cam := graphics.NewDefCam()
-	v1 := graphics.NewVec4(-1, -1, -3)
-	v2 := graphics.NewVec4(0, 1, -5)
-	v3 := graphics.NewVec4(1, -1, -3)
+	scr := third.Screen{500, 500}
+	cam := third.NewDefCam()
+	v1 := third.NewVec4(-1, -1, -3)
+	v2 := third.NewVec4(0, 1, -5)
+	v3 := third.NewVec4(1, -1, -3)
 	t := cam.PerspTransf(&scr)
 	w1 := t.Transf(v1)
 	w1.Norm()
@@ -26,13 +27,13 @@ func main() {
 	w2.Norm()
 	w3 := t.Transf(v3)
 	w3.Norm()
-	x1 := graphics.Round(w1[0])
-	y1 := graphics.Round(w1[1])
-	x2 := graphics.Round(w2[0])
-	y2 := graphics.Round(w2[1])
-	x3 := graphics.Round(w3[0])
-	y3 := graphics.Round(w3[1])
-	img := graphics.NewImage(&scr)
+	x1 := third.Round(w1[0])
+	y1 := third.Round(w1[1])
+	x2 := third.Round(w2[0])
+	y2 := third.Round(w2[1])
+	x3 := third.Round(w3[0])
+	y3 := third.Round(w3[1])
+	img := third.NewImage(&scr)
 	col := color.RGBA{255, 255, 0, 255}
 	img.DrawDot(x1, y1, col)
 	img.DrawDot(x2, y2, col)
