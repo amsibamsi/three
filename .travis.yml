@@ -9,7 +9,7 @@ go:
 # no glfw3 on ubuntu trusty
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y unzip cmake xorg-dev libgl1-mesa-dev
+  - sudo apt-get install -y libglew-dev unzip cmake xorg-dev libgl1-mesa-dev
   - wget https://github.com/glfw/glfw/releases/download/3.1.2/glfw-3.1.2.zip
   - unzip glfw-3.1.2.zip
   - cd glfw-3.1.2
