@@ -6,9 +6,10 @@ language: go
 go:
   - 1.5
 
-# caveat:
-# no glfw3 on ubuntu trusty so can not build windowing stuff
-# must add every new package manually
-script:
-  - go build -v . ./examples/thirddraw ./examples/thirdrender
-  - go test -v .
+# no glfw3 on ubuntu trusty
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y unzip cmake xorg-dev libgl1-mesa-dev
+  - wget https://github.com/glfw/glfw/releases/download/3.1.2/glfw-3.1.2.zip
+  - unzip glfw-3.1.2.zip
+  - cd glfw-3.1.2; cmake .; sudo make install
