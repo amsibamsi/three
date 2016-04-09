@@ -1,8 +1,14 @@
+sudo: required
+dist: trusty
+
 language: go
 
 go:
   - 1.5
 
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y libglfw3-dev libglew-dev
+# caveat:
+# no glfw3 on ubuntu trusty so can not build windowing stuff
+# must add every new package manually
+script:
+  - go build -v . ./examples/thirddraw ./examples/thirdrender
+  - go test -v .
