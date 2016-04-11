@@ -1,4 +1,6 @@
-// Package window covers creating windows, drawing bitmaps and processing input
-// events. It GLFW 3 and GLEW libraries installed on the system. For
-// compilation header files are also required.
+// Package window covers creating windows, drawing a texture as windows content
+// and processing input events.
+//
+// It needs GLFW3 and GLEW libraries installed on the system and calls them
+// with the help of Cgo. For compilation header files are also required.
 package window
