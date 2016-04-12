@@ -87,6 +87,7 @@ func NewWindow(w, h int, t string) (*Window, error) {
 	tex := make([]byte, 3*w*h)
 	window := Window{w, h, glfwWin, int(texId), tex}
 	C.glfwMakeContextCurrent(glfwWin)
+	C.glfwSwapInterval(0)
 	C.glewExperimental = C.GL_TRUE
 	err := C.glewInit()
 	if err != C.GLEW_OK {
