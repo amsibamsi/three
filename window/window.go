@@ -49,16 +49,16 @@ func GlfwError(error C.int, description *C.char) {
 type Window struct {
 
 	// Width of the window content
-	Width C.GLsizei
+	Width int
 
 	// Height of the window content
-	Height C.GLsizei
+	Height int
 
 	// The actual window, a GLFW window
 	GlfwWin *C.GLFWwindow
 
 	// Texture ID from OpenGL to draw the content to
-	TexId C.GLuint
+	TexId int
 
 	// Texture data. The format is based on OpenGL: 3 consecutive bytes build the
 	// color for 1 pixel, red/green/blue values. Pixels are mapped to the screen
@@ -85,7 +85,7 @@ func NewWindow(w, h int, t string) (*Window, error) {
 	var texId C.GLuint
 	C.glGenTextures(1, &texId)
 	tex := make([]byte, 3*w*h)
-	window := Window{C.GLsizei(w), C.GLsizei(h), glfwWin, texId, tex}
+	window := Window{w, h, glfwWin, int(texId), tex}
 	C.glfwMakeContextCurrent(glfwWin)
 	C.glewExperimental = C.GL_TRUE
 	err := C.glewInit()
@@ -113,16 +113,18 @@ func NewWindow(w, h int, t string) (*Window, error) {
 //   - GLFW window must first be made current
 //   - Order of glVertex2f and glTexCoord2f determines orientation
 func (w *Window) Draw() {
+	width := C.GLint(w.Width)
+	height := C.GLint(w.Height)
 	C.glfwMakeContextCurrent(w.GlfwWin)
 	C.glPixelStorei(C.GL_UNPACK_ALIGNMENT, 1)
 	C.glPixelStorei(C.GL_PACK_ALIGNMENT, 1)
-	C.glBindTexture(C.GL_TEXTURE_2D, w.TexId)
+	C.glBindTexture(C.GL_TEXTURE_2D, C.GLuint(w.TexId))
 	C.glTexImage2D(
 		C.GL_TEXTURE_2D,
 		0,
 		C.GL_RGB8,
-		w.Width,
-		w.Height,
+		C.GLsizei(width),
+		C.GLsizei(height),
 		0,
 		C.GL_RGB,
 		C.GL_UNSIGNED_BYTE,
@@ -134,19 +136,19 @@ func (w *Window) Draw() {
 	C.glClear(C.GL_COLOR_BUFFER_BIT)
 	C.glMatrixMode(C.GL_PROJECTION)
 	C.glLoadIdentity()
-	C.glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0)
+	C.glOrtho(0.0, C.GLdouble(width-1), 0.0, C.GLdouble(height-1), -1.0, 1.0)
 	C.glMatrixMode(C.GL_MODELVIEW)
 	C.glLoadIdentity()
 	C.glEnable(C.GL_TEXTURE_2D)
 	C.glBegin(C.GL_QUADS)
-	C.glTexCoord2f(0.0, 0.0)
-	C.glVertex2f(-1.0, 1.0)
-	C.glTexCoord2f(1.0, 0.0)
-	C.glVertex2f(1.0, 1.0)
-	C.glTexCoord2f(0.0, 1.0)
-	C.glVertex2f(1.0, -1.0)
-	C.glTexCoord2f(1.0, 1.0)
-	C.glVertex2f(-1.0, -1.0)
+	C.glTexCoord2i(0, 0)
+	C.glVertex2i(0, height-1)
+	C.glTexCoord2i(1, 0)
+	C.glVertex2i(width-1, height-1)
+	C.glTexCoord2i(1, 1)
+	C.glVertex2i(width-1, 0)
+	C.glTexCoord2i(0, 1)
+	C.glVertex2i(0, 0)
 	C.glEnd()
 	C.glfwSwapBuffers(w.GlfwWin)
 }
