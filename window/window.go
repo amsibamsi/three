@@ -95,6 +95,22 @@ func NewWindow(w, h int, t string) (*Window, error) {
 		msg := fmt.Sprintf("Failed to initialize GLEW: %s", C.GoString(errstr))
 		return nil, errors.New(msg)
 	}
+	C.glBindTexture(C.GL_TEXTURE_2D, C.GLuint(texId))
+	C.glTexParameteri(C.GL_TEXTURE_2D, C.GL_TEXTURE_MIN_FILTER, C.GL_NEAREST)
+	C.glTexParameteri(C.GL_TEXTURE_2D, C.GL_TEXTURE_MAG_FILTER, C.GL_NEAREST)
+	C.glPixelStorei(C.GL_UNPACK_ALIGNMENT, 1)
+	C.glPixelStorei(C.GL_PACK_ALIGNMENT, 1)
+	C.glTexImage2D(
+		C.GL_TEXTURE_2D,
+		0,
+		C.GL_RGB8,
+		C.GLsizei(w),
+		C.GLsizei(h),
+		0,
+		C.GL_RGB,
+		C.GL_UNSIGNED_BYTE,
+		unsafe.Pointer(&tex[0]),
+	)
 	return &window, nil
 }
 
@@ -119,20 +135,17 @@ func (w *Window) Draw() {
 	C.glfwMakeContextCurrent(w.GlfwWin)
 	C.glPixelStorei(C.GL_UNPACK_ALIGNMENT, 1)
 	C.glPixelStorei(C.GL_PACK_ALIGNMENT, 1)
-	C.glBindTexture(C.GL_TEXTURE_2D, C.GLuint(w.TexId))
-	C.glTexImage2D(
+	C.glTexSubImage2D(
 		C.GL_TEXTURE_2D,
 		0,
-		C.GL_RGB8,
+		0,
+		0,
 		C.GLsizei(width),
 		C.GLsizei(height),
-		0,
 		C.GL_RGB,
 		C.GL_UNSIGNED_BYTE,
 		unsafe.Pointer(&w.Tex[0]),
 	)
-	C.glTexParameteri(C.GL_TEXTURE_2D, C.GL_TEXTURE_MIN_FILTER, C.GL_NEAREST)
-	C.glTexParameteri(C.GL_TEXTURE_2D, C.GL_TEXTURE_MAG_FILTER, C.GL_NEAREST)
 	C.glClearColor(0.0, 0.0, 0.0, 0.0)
 	C.glClear(C.GL_COLOR_BUFFER_BIT)
 	C.glMatrixMode(C.GL_PROJECTION)
