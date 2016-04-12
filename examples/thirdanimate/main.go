@@ -37,25 +37,8 @@ func main() {
 	now := time.Now()
 	for close := false; !close; close = w.ShouldClose() {
 		w.Tex[x*3+y*3*width] = 0
-		n := r.Intn(4)
-		switch n {
-		case 0:
-			x++
-		case 1:
-			y++
-		case 2:
-			x--
-		case 3:
-			y--
-		}
-		if x < 0 {
-			x = width - x
-		}
-		if y < 0 {
-			y = height - y
-		}
-		x %= width
-		y %= height
+		x = (x + r.Intn(3) - 1 + width) % width
+		y = (y + r.Intn(3) - 1 + height) % height
 		w.Tex[x*3+y*3*width] = 255
 		w.Draw()
 		//time.Sleep(10 * time.Millisecond)
