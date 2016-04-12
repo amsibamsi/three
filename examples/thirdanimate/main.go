@@ -8,7 +8,7 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
-	//"time"
+	"time"
 )
 
 // main initializes windowing, creates a new, continuously draws some pixels,
@@ -29,6 +29,10 @@ func main() {
 	x := 0
 	y := 0
 	r := rand.New(rand.NewSource(0))
+	frames := 0
+	elapsed := int64(0)
+	then := time.Now()
+	now := time.Now()
 	for close := false; !close; close = w.ShouldClose() {
 		w.Tex[x*3+y*300] = 0
 		n := r.Intn(4)
@@ -54,6 +58,15 @@ func main() {
 		w.Draw()
 		//time.Sleep(10 * time.Millisecond)
 		window.PollEvents()
+		frames++
+		now = time.Now()
+		elapsed += now.Sub(then).Nanoseconds()
+		then = now
+		if elapsed > 1e9 {
+			fmt.Printf("fps: %f\n", float64(frames)/(float64(elapsed)/1e9))
+			elapsed = 0
+			frames = 0
+		}
 	}
 	w.Destroy()
 }
