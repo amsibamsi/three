@@ -14,6 +14,8 @@ import (
 // main initializes windowing, creates a new, continuously draws some pixels,
 // waits for close event, destroys the window and terminates windowing.
 func main() {
+	width := 1024
+	height := 768
 	runtime.LockOSThread()
 	err := window.Init()
 	if err != nil {
@@ -21,7 +23,7 @@ func main() {
 		os.Exit(-1)
 	}
 	defer window.Terminate()
-	w, err := window.NewWindow(100, 100, "Third Animate")
+	w, err := window.NewWindow(width, height, "Third Animate")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
@@ -34,7 +36,7 @@ func main() {
 	then := time.Now()
 	now := time.Now()
 	for close := false; !close; close = w.ShouldClose() {
-		w.Tex[x*3+y*300] = 0
+		w.Tex[x*3+y*3*width] = 0
 		n := r.Intn(4)
 		switch n {
 		case 0:
@@ -47,14 +49,14 @@ func main() {
 			y--
 		}
 		if x < 0 {
-			x = 100 - x
+			x = width - x
 		}
 		if y < 0 {
-			y = 100 - y
+			y = height - y
 		}
-		x %= 100
-		y %= 100
-		w.Tex[x*3+y*300] = 255
+		x %= width
+		y %= height
+		w.Tex[x*3+y*3*width] = 255
 		w.Draw()
 		//time.Sleep(10 * time.Millisecond)
 		window.PollEvents()
