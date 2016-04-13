@@ -4,11 +4,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/amsibamsi/third"
 	"github.com/amsibamsi/third/window"
 	"math/rand"
 	"os"
-	"runtime"
-	"time"
 )
 
 // main initializes windowing, creates a new, continuously draws some pixels,
@@ -16,42 +15,25 @@ import (
 func main() {
 	width := 1024
 	height := 768
-	runtime.LockOSThread()
-	err := window.Init()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(-1)
-	}
-	defer window.Terminate()
 	w, err := window.NewWindow(width, height, "Third Animate")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
 	}
-	x := 0
-	y := 0
+	defer window.Terminate()
+	x := width / 2
+	y := height / 2
 	r := rand.New(rand.NewSource(0))
-	frames := 0
-	elapsed := int64(0)
-	then := time.Now()
-	now := time.Now()
 	for close := false; !close; close = w.ShouldClose() {
-		w.Tex[x*3+y*3*width] = 0
-		x = (x + r.Intn(3) - 1 + width) % width
-		y = (y + r.Intn(3) - 1 + height) % height
-		w.Tex[x*3+y*3*width] = 255
-		w.Draw()
-		//time.Sleep(10 * time.Millisecond)
-		window.PollEvents()
-		frames++
-		now = time.Now()
-		elapsed += now.Sub(then).Nanoseconds()
-		then = now
-		if elapsed > 1e9 {
-			fmt.Printf("fps: %f\n", float64(frames)/(float64(elapsed)/1e9))
-			elapsed = 0
-			frames = 0
-		}
+		w.Set(x, y, 0, 0, 0)
+		width = w.Width()
+		height = w.Height()
+		x = x + r.Intn(3) - 1
+		x = third.Min(width, third.Max(0, x))
+		y = y + r.Intn(3) - 1
+		y = third.Min(height, third.Max(0, y))
+		w.Set(x, y, 255, 0, 0)
+		w.Update()
 	}
 	w.Destroy()
 }

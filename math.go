@@ -16,6 +16,24 @@ func Round(f float64) int {
 	return int(math.Floor(f + 0.5))
 }
 
+//
+func Max(a, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+
+//
+func Min(a, b int) int {
+	if a < b {
+		return a
+	} else {
+		return b
+	}
+}
+
 // Vec3 is a vector in 3D space with cartesian coordinates. Holds 3 components:
 // x, y and z in this order.
 type Vec3 [3]float64
