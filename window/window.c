@@ -1,11 +1,39 @@
-#include "_cgo_export.h"
-
-void glfwErrorCallback(int error, const char* description) {
-  GlfwError(error, (char*)description);
+//
+void glfwError(int err, const char* desc) {
+  fprintf(stderr, "GLFW error: %d: %s\n", err, desc);
 }
 
-void setGlfwErrorCallback() {
-  glfwSetErrorCallback(glfwErrorCallback);
+//
+bool initGlfw() {
+  setGlfwErrorCallback(glfwError);
+  return glfwInit() == GL_TRUE;
+}
+
+//
+GLFWwindow* createWindow(const GLint width,
+                         const GLint height,
+                         const char* title) {
+  GLFWwindow* win;
+	glfwWindowHint(C.GLFW_CLIENT_API, C.GLFW_OPENGL_API);
+	glfwWindowHint(C.GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(C.GLFW_CONTEXT_VERSION_MINOR, 1);
+  win = glfwCreateWindow(width, height, title, NULL, NULL);
+  win == NULL && return NULL;
+  glfwMakeContextCurrent(win);
+  glfwSwapInterval(1);
+  return win;
+}
+
+//
+bool initGlew(GLFWwindow* win) {
+  int err;
+  glewExperimental = GL_TRUE;
+  err = glewInit();
+  if err != GLEW_OK {
+    fprintf(stderr, "GLEW init failed: %s\n", glewGetString(err));
+    return false;
+  }
+  return true;
 }
 
 // TODO: Can texture be created without uploading data?

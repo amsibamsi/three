@@ -17,31 +17,15 @@ import (
 	"unsafe"
 )
 
-// init initializes GLFW.  Any error will be handled by GlfwError().
-// Initializes OpenGL in version 2.1. The calling thread will be locked since
-// most GLFW functions are not thread-safe.
-func init() {
+// Init initializes windowing by initializing GLFW. Any error will be printed
+// to stderr. The current goroutine will be locked to the OS thread since most
+// GLFW functions are not thread-safe.
+func Init() error {
 	runtime.LockOSThread()
-	C.setGlfwErrorCallback()
-	err := C.glfwInit()
-	if err != C.GL_TRUE {
-		GlfwError(err, C.CString("Failed to initialize GLFW"))
+	if !initGlfw() {
+		return errors.New("GLFW init failed")
 	}
-	C.glfwWindowHint(C.GLFW_CLIENT_API, C.GLFW_OPENGL_API)
-	C.glfwWindowHint(C.GLFW_CONTEXT_VERSION_MAJOR, 2)
-	C.glfwWindowHint(C.GLFW_CONTEXT_VERSION_MINOR, 1)
-}
-
-// GlfwError is used as callback from GLFW to handle errors. Currently just
-// prints the error to stderr. This function must be exported because Cgo can
-// not register a Go function as callback in C, only C functions.
-//export GlfwError
-func GlfwError(error C.int, description *C.char) {
-	fmt.Fprintf(
-		os.Stderr,
-		"GLFW error %d: %s\n",
-		int(error), C.GoString(description),
-	)
+	return nil
 }
 
 // Terminate should be called once on program termination to signal GLFW to
