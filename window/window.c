@@ -2,12 +2,15 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-//
+// Callback function for GLFW errors.
+// Just print errors to stderr.
 void glfwError(int err, const char* desc) {
   fprintf(stderr, "GLFW error: %d: %s\n", err, desc);
 }
 
-//
+// Initialize GLFW.
+// Returns 0 for success and otherwise 1. Errors will be handled by the error
+// callback.
 int initGlfw() {
   int err;
   glfwSetErrorCallback(glfwError);
@@ -18,7 +21,10 @@ int initGlfw() {
   return 1;
 }
 
-//
+// Create a GLFW window.
+// Initializes the window with OpenGL API 2.1 and sets the swap interval to 1.
+// Returns the window in case of success and otherwise NULL. Errors will be
+// handled by the error callback.
 GLFWwindow* createWin(int width,
                       int height,
                       char* title) {
@@ -34,7 +40,9 @@ GLFWwindow* createWin(int width,
   return win;
 }
 
-//
+// Initializes GLEW on the given window.
+// Makes the window and it's context ready for OpenGL calls. Returns 0 for
+// success and otherwise 1. Errors will be printed to stderr.
 int initGlew(GLFWwindow* win) {
   int err;
   glfwMakeContextCurrent(win);
@@ -47,16 +55,17 @@ int initGlew(GLFWwindow* win) {
   return 1;
 }
 
-//
+// Initializes a window after GLEW has been initialized.
+// Sets the viewport to the current width and height.
 void initWin(GLFWwindow* win,
              int width,
              int height) {
   glfwMakeContextCurrent(win);
-  glfwSwapInterval(1);
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 }
 
-//
+// Adapts the window after it has been resized.
+// Resets the viewport.
 void winResized(GLFWwindow* win,
                 int width,
                 int height) {
@@ -64,6 +73,11 @@ void winResized(GLFWwindow* win,
   glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 }
 
+// Creates the texture to be drawn as content of the window.
+// Generates a new texture and uploads the texture data. The format of the
+// texture data must match what is hard coded here. Returns the ID for the
+// newly generated texture object.
+//
 // TODO: Can texture be created without uploading data?
 GLuint createTex(GLFWwindow* window,
                  GLvoid* data,
@@ -89,13 +103,17 @@ GLuint createTex(GLFWwindow* window,
   return tex;
 }
 
-//
+// Deletes a texture object.
 void delTex(GLFWwindow* window,
             GLuint tex) {
   glDeleteTextures(1, &tex);
 }
 
-//
+// Draws the texture with the given data.
+// Clears the framebuffer, sets an orthogonal projection to cover the whole
+// window content and draws a rectangle with the texture. The format of the
+// texture data must match what is hard coded here. The result won't be
+// shown on screen until buffers are swapped.
 void drawTex(GLFWwindow* window,
              GLvoid* data,
              int width,
@@ -132,7 +150,9 @@ void drawTex(GLFWwindow* window,
   glEnd();
 }
 
-//
+// Resize the texture.
+// Deletes the old texture and creates a new one with the given dimensions.
+// Returns the ID of the new texture object.
 GLuint resizeTex(GLFWwindow* win,
                  GLuint tex,
                  GLvoid* data,
