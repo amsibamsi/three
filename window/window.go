@@ -11,27 +11,49 @@ import "C"
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"runtime"
 	"unsafe"
 )
 
-// Init initializes windowing by initializing GLFW. Any error will be printed
-// to stderr. The current goroutine will be locked to the OS thread since most
-// GLFW functions are not thread-safe.
-func Init() error {
+var (
+	glfwInitDone = false
+)
+
+// initGlfw initializes windowing by initializing GLFW. Any error will be
+// printed to stderr. The current goroutine will be locked to the OS thread
+// since most GLFW functions are not thread-safe.
+func initGlfw() error {
 	runtime.LockOSThread()
-	if !initGlfw() {
+	err := C.initGlfw()
+	if err != 1 {
 		return errors.New("GLFW init failed")
 	}
 	return nil
+}
+
+//
+func ensGlfwInit() error {
+	if glfwInitDone {
+		return nil
+	} else {
+		return initGlfw()
+	}
+}
+
+//
+func newTex(w, h int) []byte {
+	return make([]byte, 3*w*h)
 }
 
 // Terminate should be called once on program termination to signal GLFW to
 // clean up. Destroys all remaining windows.
 func Terminate() {
 	C.glfwTerminate()
+}
+
+// pollEvents registers pending event input and makes it ready to be queried.
+func pollEvents() {
+	C.glfwPollEvents()
 }
 
 // Window represents a graphical window.
@@ -61,36 +83,38 @@ type Window struct {
 // width, height and title, initializes the texture data and initializes
 // GLEW with the window's context.
 func NewWindow(w, h int, t string) (*Window, error) {
-	glfwWin := C.glfwCreateWindow(
+	if w < 0 {
+		return nil, errors.New("Width must not be < 0")
+	}
+	if h < 0 {
+		return nil, errors.New("Height must not be < 0")
+	}
+	err := ensGlfwInit()
+	if err != nil {
+		return nil, err
+	}
+	glfwWin := C.createWin(
 		C.int(w),
 		C.int(h),
 		C.CString(t),
-		nil,
-		nil,
 	)
 	if glfwWin == nil {
-		C.glfwTerminate()
-		return nil, errors.New("Failed to open GLFW window")
+		Terminate()
+		return nil, errors.New("Failed to create window")
 	}
-	C.glfwMakeContextCurrent(glfwWin)
-	C.glfwSwapInterval(1)
-	C.glewExperimental = C.GL_TRUE
-	err := C.glewInit()
-	if err != C.GLEW_OK {
-		errstr := (*C.char)(unsafe.Pointer(&err))
-		msg := fmt.Sprintf("Failed to initialize GLEW: %s", C.GoString(errstr))
-		return nil, errors.New(msg)
+	errno := int(C.initGlew(glfwWin))
+	if errno != 1 {
+		return nil, errors.New("Failed to init GLEW")
 	}
-	C.glViewport(0, 0, C.GLsizei(w), C.GLsizei(h))
-	tex := make([]byte, 3*w*h)
-	texId := C.createTexture(
+	C.initWin(glfwWin, C.int(w), C.int(h))
+	tex := newTex(w, h)
+	texId := C.createTex(
 		glfwWin,
 		unsafe.Pointer(&tex),
-		C.GLint(w),
-		C.GLint(h),
+		C.int(w),
+		C.int(h),
 	)
-	window := Window{w, h, glfwWin, texId, tex}
-	return &window, nil
+	return &Window{w, h, glfwWin, texId, tex}, nil
 }
 
 // Show draws the current texture data of the window.
@@ -108,13 +132,17 @@ func NewWindow(w, h int, t string) (*Window, error) {
 //
 //   - GLFW window must first be made current
 //   - Order of glVertex2f and glTexCoord2f determines orientation
-func (w *Window) refreshContent() {
-	C.drawTexture(
+func (w *Window) redraw() {
+	C.drawTex(
 		w.glfwWin,
 		unsafe.Pointer(&w.tex[0]),
-		C.GLint(w.width),
-		C.GLint(w.height),
+		C.int(w.width),
+		C.int(w.height),
 	)
+}
+
+//
+func (w *Window) refreshWait() {
 	C.glfwSwapBuffers(w.glfwWin)
 }
 
@@ -127,24 +155,18 @@ func (w *Window) resize() {
 		(*C.int)(unsafe.Pointer(&height)),
 	)
 	if width != w.width || height != w.height {
-		C.glViewport(0, 0, C.GLsizei(width), C.GLsizei(height))
-		C.glDeleteTextures(1, &w.texId)
-		tex := make([]byte, 3*width*height)
-		w.tex = tex
-		w.texId = C.createTexture(
-			w.glfwWin,
-			unsafe.Pointer(&w.tex[0]),
-			C.GLint(width),
-			C.GLint(height),
-		)
 		w.width = width
 		w.height = height
+		w.tex = newTex(width, height)
+		w.texId = C.resizeTex(
+			w.glfwWin,
+			w.texId,
+			unsafe.Pointer(&w.tex[0]),
+			C.int(width),
+			C.int(height),
+		)
+		C.winResized(w.glfwWin, C.int(width), C.int(height))
 	}
-}
-
-// pollEvents registers pending event input and makes it ready to be queried.
-func pollEvents() {
-	C.glfwPollEvents()
 }
 
 //
@@ -159,7 +181,8 @@ func (w *Window) Set(x, y int, r, g, b byte) {
 
 //
 func (w *Window) Update() {
-	w.refreshContent()
+	w.redraw()
+	w.refreshWait()
 	w.resize()
 	pollEvents()
 }
