@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewImage(t *testing.T) {
-	img := NewImage(&Screen{100, 100})
+	img := NewImage(100, 100)
 	rgba := img.Rgba
 	bounds := rgba.Bounds()
 	rect := image.Rect(0, 0, 100, 100)
@@ -19,7 +19,7 @@ func TestNewImage(t *testing.T) {
 }
 
 func TestDrawDot(t *testing.T) {
-	img := NewImage(&Screen{100, 100})
+	img := NewImage(100, 100)
 	rgba := img.Rgba
 	col1 := color.RGBA{200, 111, 38, 1}
 	img.DrawDot(50, 50, col1)
@@ -30,7 +30,7 @@ func TestDrawDot(t *testing.T) {
 }
 
 func TestDrawLine1(t *testing.T) {
-	img := NewImage(&Screen{100, 100})
+	img := NewImage(100, 100)
 	rgba := img.Rgba
 	col := color.RGBA{1, 2, 3, 4}
 	img.DrawLine(10, 10, 12, 12, col)
@@ -46,7 +46,7 @@ func TestDrawLine1(t *testing.T) {
 }
 
 func TestDrawLine2(t *testing.T) {
-	img := NewImage(&Screen{100, 100})
+	img := NewImage(100, 100)
 	rgba := img.Rgba
 	col := color.RGBA{1, 2, 3, 4}
 	img.DrawLine(10, 10, 13, 11, col)
@@ -63,7 +63,7 @@ func TestDrawLine2(t *testing.T) {
 }
 
 func TestDrawLine3(t *testing.T) {
-	img := NewImage(&Screen{100, 100})
+	img := NewImage(100, 100)
 	rgba := img.Rgba
 	col := color.RGBA{1, 2, 3, 4}
 	img.DrawLine(10, 10, 9, 9, col)
@@ -78,8 +78,7 @@ func TestDrawLine3(t *testing.T) {
 }
 
 func TestWritePng(t *testing.T) {
-	scr := Screen{100, 100}
-	img1 := NewImage(&scr)
+	img1 := NewImage(100, 100)
 	col1 := color.RGBA{0, 11, 0, 255}
 	img1.DrawDot(4, 5, col1)
 	var buf bytes.Buffer

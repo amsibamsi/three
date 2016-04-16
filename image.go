@@ -16,8 +16,8 @@ type Image struct {
 
 // NewImage returns a new image with the given screen width and height and
 // black background.
-func NewImage(s *Screen) *Image {
-	rect := image.Rect(0, 0, s.Width, s.Height)
+func NewImage(w, h int) *Image {
+	rect := image.Rect(0, 0, w, h)
 	rgba := image.NewRGBA(rect)
 	bg := image.Uniform{color.Black}
 	draw.Draw(rgba, rgba.Bounds(), &bg, image.Point{}, draw.Src)

@@ -119,8 +119,7 @@ func TestScreenTransf1(t *testing.T) {
 		Nwidth:  10,
 		Nheight: 10,
 	}
-	s := Screen{100, 100}
-	m := *ScreenTransf(&f, &s)
+	m := *ScreenTransf(&f, 100, 100)
 	v := Vec4{-10, 10, 2, 2}
 	w := *m.Transf(&v)
 	r := Vec4{0, 0, 2, 2}
@@ -134,8 +133,7 @@ func TestScreenTransf2(t *testing.T) {
 		Nwidth:  10,
 		Nheight: 10,
 	}
-	s := Screen{100, 100}
-	m := *ScreenTransf(&f, &s)
+	m := *ScreenTransf(&f, 100, 100)
 	v := Vec4{-5, 5, 2, 2}
 	w := *m.Transf(&v)
 	r := Vec4{50, 50, 2, 2}
@@ -146,8 +144,7 @@ func TestScreenTransf2(t *testing.T) {
 
 func TestPerspTransf(t *testing.T) {
 	c := NewDefCam()
-	s := &Screen{100, 100}
-	m := c.PerspTransf(s)
+	m := c.PerspTransf(100, 100)
 	v := &Vec4{2, 1, -2, 1}
 	w := m.Transf(v)
 	w.Norm()

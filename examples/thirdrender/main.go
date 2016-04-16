@@ -15,12 +15,11 @@ import (
 func main() {
 	var filename = flag.String("file", "triangle.png", "Filename to store image")
 	flag.Parse()
-	scr := third.Screen{500, 500}
 	cam := third.NewDefCam()
 	v1 := third.NewVec4(-1, -1, -3)
 	v2 := third.NewVec4(0, 1, -5)
 	v3 := third.NewVec4(1, -1, -3)
-	t := cam.PerspTransf(&scr)
+	t := cam.PerspTransf(500, 500)
 	w1 := t.Transf(v1)
 	w1.Norm()
 	w2 := t.Transf(v2)
@@ -33,7 +32,7 @@ func main() {
 	y2 := third.Round(w2[1])
 	x3 := third.Round(w3[0])
 	y3 := third.Round(w3[1])
-	img := third.NewImage(&scr)
+	img := third.NewImage(500, 500)
 	col := color.RGBA{255, 255, 0, 255}
 	img.DrawDot(x1, y1, col)
 	img.DrawDot(x2, y2, col)

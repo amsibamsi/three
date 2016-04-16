@@ -157,29 +157,17 @@ func (c *Camera) Frustum() *Frustum {
 	return &Frustum{nw, nh, fw, fh}
 }
 
-// Screen is the rectangular area to render an image on. The origin is in the
-// upper left (0,0) and it extends to the right bottom.
-type Screen struct {
-
-	// Width of the screen in pixels
-	Width int
-
-	// Height of the screen in pixels
-	Height int
-}
-
 // ScreenTransf returns a new matrix that transforms vectors after projection
 // to screen coordinates. The upper left corner of the near rectangle will be
-// (0,0) and the bottom right will be (width,height). If the aspect ratio does
-// not match the camera the image will be distorted. It needs the frustum of
-// the camera and a screen as arguments.
-func ScreenTransf(f *Frustum, s *Screen) *Mat4 {
-	w := float64(s.Width)
-	h := float64(s.Height)
+// (0,0) and the bottom right will be (w,h). If the aspect ratio does not match
+// the camera the image will be distorted.
+func ScreenTransf(f *Frustum, w, h int) *Mat4 {
+	wf := float64(w)
+	hf := float64(h)
 	t := TranslTransf(&Vec3{f.Nwidth / 2, -f.Nheight / 2, 0})
 	m := Mat4{
-		w / f.Nwidth, 0, 0, 0,
-		0, -h / f.Nheight, 0, 0,
+		wf / f.Nwidth, 0, 0, 0,
+		0, -hf / f.Nheight, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1,
 	}
@@ -195,9 +183,9 @@ func ScreenTransf(f *Frustum, s *Screen) *Mat4 {
 //   - screen transformation
 //   - perspective transformation
 //   - camera transformation
-func (c *Camera) PerspTransf(s *Screen) *Mat4 {
+func (c *Camera) PerspTransf(w, h int) *Mat4 {
 	f := c.Frustum()
-	m := ScreenTransf(f, s)
+	m := ScreenTransf(f, w, h)
 	m.Mul(c.ProjTransf())
 	m.Mul(c.CamTransf())
 	return m

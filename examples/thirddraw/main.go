@@ -19,8 +19,7 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	s := third.Screen{500, 500}
-	i := third.NewImage(&s)
+	i := third.NewImage(500, 500)
 	c := color.RGBA{255, 255, 0, 255}
 	x1 := 250
 	y1 := 10
