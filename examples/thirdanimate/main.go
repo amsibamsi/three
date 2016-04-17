@@ -25,14 +25,14 @@ func main() {
 	y := height / 2
 	r := rand.New(rand.NewSource(0))
 	for close := false; !close; close = w.ShouldClose() {
-		w.Set(x, y, 0, 0, 0)
+		w.Setxy(x, y, 0, 0, 0)
 		width = w.Width()
 		height = w.Height()
 		x = x + r.Intn(3) - 1
 		x = third.Min(width, third.Max(0, x))
 		y = y + r.Intn(3) - 1
 		y = third.Min(height, third.Max(0, y))
-		w.Set(x, y, 255, 0, 0)
+		w.Setxy(x, y, 255, 0, 0)
 		w.Update()
 	}
 	w.Destroy()

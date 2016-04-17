@@ -16,7 +16,7 @@ func Round(f float64) int {
 	return int(math.Floor(f + 0.5))
 }
 
-//
+// Max returns the maximum of two integers.
 func Max(a, b int) int {
 	if a > b {
 		return a
@@ -25,7 +25,7 @@ func Max(a, b int) int {
 	}
 }
 
-//
+// Min returns the minimum of two integers.
 func Min(a, b int) int {
 	if a < b {
 		return a
@@ -33,6 +33,10 @@ func Min(a, b int) int {
 		return b
 	}
 }
+
+// Vec2 is a fector in 2D space with cartesian coordinates. It has integer
+// coordinates and is intended to be used for addressing pixels on a display.
+type Vec2 [2]int
 
 // Vec3 is a vector in 3D space with cartesian coordinates. Holds 3 components:
 // x, y and z in this order.
