@@ -25,6 +25,8 @@ func main() {
 		now := time.Now()
 		m := &p[1][1]
 		*m = math.Sin(float64(now.UnixNano()) / 1e9)
+		c := &cam.At[0]
+		*c = math.Cos(float64(now.UnixNano()) / 1e9)
 		w := win.Width()
 		h := win.Height()
 		cam.Ar = float64(w) / float64(h)
