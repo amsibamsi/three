@@ -34,7 +34,7 @@ func Min(a, b int) int {
 	}
 }
 
-// Vec2 is a fector in 2D space with cartesian coordinates. It has integer
+// Vec2 is a vector in 2D space with cartesian coordinates. It has integer
 // coordinates and is intended to be used for addressing pixels on a display.
 type Vec2 [2]int
 
