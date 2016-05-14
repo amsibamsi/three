@@ -4,6 +4,15 @@ import (
 	"math"
 )
 
+func TranslTransf(v *Vec3) *Mat4 {
+	return &Mat4{
+		1, 0, 0, v[0],
+		0, 1, 0, v[1],
+		0, 0, 1, v[2],
+		0, 0, 0, 1,
+	}
+}
+
 // CoordTransf returns a new matrix that transforms from the orthonormal basis
 // given by the 3 argument axes to the standard basis. It is used to to
 // transform vectors from the world to the camera view.

@@ -1,2 +1,2 @@
-// Package three contains some 3D graphics coding.
+// Package three provides some 3D coding.
 package three

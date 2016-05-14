@@ -1,38 +1,8 @@
-package three
+package math
 
 import (
-	"math"
 	"math/rand"
 )
-
-// Abs returns the absolute value of an integer.
-func Abs(i int) int {
-	m := i >> 31
-	return (m ^ i) - m
-}
-
-// Round returns the rounded integer for a float.
-func Round(f float64) int {
-	return int(math.Floor(f + 0.5))
-}
-
-// Max returns the maximum of two integers.
-func Max(a, b int) int {
-	if a > b {
-		return a
-	} else {
-		return b
-	}
-}
-
-// Min returns the minimum of two integers.
-func Min(a, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
-}
 
 // Vec2 is a vector in 2D space with cartesian coordinates. It has integer
 // coordinates and is intended to be used for addressing pixels on a display.
@@ -139,15 +109,4 @@ func (m *Mat4) Transf(v *Vec4) *Vec4 {
 		}
 	}
 	return &p
-}
-
-// TranslTransf returns a new translation matrix that translates vectors by the
-// argument vector.
-func TranslTransf(v *Vec3) *Mat4 {
-	return &Mat4{
-		1, 0, 0, v[0],
-		0, 1, 0, v[1],
-		0, 0, 1, v[2],
-		0, 0, 0, 1,
-	}
 }
