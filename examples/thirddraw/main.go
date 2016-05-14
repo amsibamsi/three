@@ -4,7 +4,7 @@ package main
 
 import (
 	"flag"
-	"github.com/amsibamsi/third"
+	"github.com/amsibamsi/three"
 	"image/color"
 	"os"
 )
@@ -19,7 +19,7 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	i := third.NewImage(500, 500)
+	i := three.NewImage(500, 500)
 	c := color.RGBA{255, 255, 0, 255}
 	x1 := 250
 	y1 := 10

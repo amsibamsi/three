@@ -4,7 +4,7 @@ package main
 
 import (
 	"flag"
-	"github.com/amsibamsi/third"
+	"github.com/amsibamsi/three"
 	"image/color"
 	"os"
 )
@@ -15,10 +15,10 @@ import (
 func main() {
 	var filename = flag.String("file", "triangle.png", "Filename to store image")
 	flag.Parse()
-	cam := third.NewDefCam()
-	v1 := third.NewVec4(-1, -1, -3)
-	v2 := third.NewVec4(0, 1, -5)
-	v3 := third.NewVec4(1, -1, -3)
+	cam := three.NewDefCam()
+	v1 := three.NewVec4(-1, -1, -3)
+	v2 := three.NewVec4(0, 1, -5)
+	v3 := three.NewVec4(1, -1, -3)
 	t := cam.PerspTransf(500, 500)
 	w1 := t.Transf(v1)
 	w1.Norm()
@@ -26,13 +26,13 @@ func main() {
 	w2.Norm()
 	w3 := t.Transf(v3)
 	w3.Norm()
-	x1 := third.Round(w1[0])
-	y1 := third.Round(w1[1])
-	x2 := third.Round(w2[0])
-	y2 := third.Round(w2[1])
-	x3 := third.Round(w3[0])
-	y3 := third.Round(w3[1])
-	img := third.NewImage(500, 500)
+	x1 := three.Round(w1[0])
+	y1 := three.Round(w1[1])
+	x2 := three.Round(w2[0])
+	y2 := three.Round(w2[1])
+	x3 := three.Round(w3[0])
+	y3 := three.Round(w3[1])
+	img := three.NewImage(500, 500)
 	col := color.RGBA{255, 255, 0, 255}
 	img.DrawDot(x1, y1, col)
 	img.DrawDot(x2, y2, col)

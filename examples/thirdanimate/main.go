@@ -4,8 +4,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/amsibamsi/third"
-	"github.com/amsibamsi/third/window"
+	"github.com/amsibamsi/three"
+	"github.com/amsibamsi/three/window"
 	"math/rand"
 	"os"
 )
@@ -29,9 +29,9 @@ func main() {
 		width = w.Width()
 		height = w.Height()
 		x = x + r.Intn(3) - 1
-		x = third.Min(width, third.Max(0, x))
+		x = three.Min(width, three.Max(0, x))
 		y = y + r.Intn(3) - 1
-		y = third.Min(height, third.Max(0, y))
+		y = three.Min(height, three.Max(0, y))
 		w.Setxy(x, y, 255, 0, 0)
 		w.Update()
 	}

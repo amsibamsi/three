@@ -3,9 +3,9 @@
 package main
 
 import (
-	"github.com/amsibamsi/third"
-	"github.com/amsibamsi/third/geom"
-	"github.com/amsibamsi/third/window"
+	"github.com/amsibamsi/three"
+	"github.com/amsibamsi/three/geom"
+	"github.com/amsibamsi/three/window"
 	"math"
 	"time"
 )
@@ -19,7 +19,7 @@ func main() {
 		panic(err)
 	}
 	defer window.Terminate()
-	cam := third.NewDefCam()
+	cam := three.NewDefCam()
 	p := geom.NewTri4(-1, 0, -3, 0, 1, -3, 1, 0, -3)
 	for close := false; !close; close = win.ShouldClose() {
 		now := time.Now()

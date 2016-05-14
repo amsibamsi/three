@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/amsibamsi/third/window"
+	"github.com/amsibamsi/three/window"
 	"os"
 )
 

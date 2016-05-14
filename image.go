@@ -1,4 +1,4 @@
-package third
+package three
 
 import (
 	"image"

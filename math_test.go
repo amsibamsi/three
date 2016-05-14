@@ -1,6 +1,6 @@
 // Generate random matrix with Wolfram Alpha:
 // RandomInteger[{-10,10},{4,4}]
-package third
+package three
 
 import (
 	"math/rand"
