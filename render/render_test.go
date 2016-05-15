@@ -2,6 +2,7 @@ package render
 
 import (
 	"github.com/amsibamsi/three/math/geom"
+	"github.com/amsibamsi/three/window"
 	"math"
 	"reflect"
 	"testing"
