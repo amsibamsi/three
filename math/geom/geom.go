@@ -1,11 +1,12 @@
-package math
+package geom
 
 import (
+	"math"
 	"math/rand"
 )
 
-// Vec2 is a vector in 2D space with cartesian coordinates. It has integer
-// coordinates and is intended to be used for addressing pixels on a display.
+// Vec2 is a vector in 2D space with cartesian coordinates. Holds 2 components:
+// x and y in this order.
 type Vec2 [2]int
 
 // Vec3 is a vector in 3D space with cartesian coordinates. Holds 3 components:

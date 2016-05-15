@@ -45,6 +45,19 @@ func TestCamAxes(t *testing.T) {
 	}
 }
 
+func TestTranslTransf(t *testing.T) {
+	m := *TranslTransf(&Vec3{1, 2, 3})
+	r := Mat4{
+		1, 0, 0, 1,
+		0, 1, 0, 2,
+		0, 0, 1, 3,
+		0, 0, 0, 1,
+	}
+	if m != r {
+		t.Errorf("expected '%v' but got '%v'", r, m)
+	}
+}
+
 func TestCoordTransf(t *testing.T) {
 	x := Vec3{1, 0, 0}
 	y := Vec3{0, 1, 0}
