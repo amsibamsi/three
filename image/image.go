@@ -1,6 +1,7 @@
-package three
+package image
 
 import (
+	tmath "github.com/amsibamsi/three/math"
 	"image"
 	"image/color"
 	"image/draw"
@@ -57,17 +58,17 @@ func (img *Image) DrawLine(x1, y1, x2, y2 int, c color.Color) {
 	dx := x2 - x1
 	dy := y2 - y1
 	var steps int
-	if Abs(dx) > Abs(dy) {
-		steps = Abs(dx)
+	if tmath.Absi(dx) > tmath.Absi(dy) {
+		steps = tmath.Absi(dx)
 	} else {
-		steps = Abs(dy)
+		steps = tmath.Absi(dy)
 	}
 	xinc := float64(dx) / float64(steps)
 	yinc := float64(dy) / float64(steps)
 	x := float64(x1)
 	y := float64(y1)
 	for s := 0; s <= steps; s++ {
-		r.Set(Round(x), Round(y), c)
+		r.Set(tmath.Round(x), tmath.Round(y), c)
 		x += xinc
 		y += yinc
 	}
