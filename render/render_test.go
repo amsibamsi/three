@@ -1,6 +1,7 @@
-package three
+package render
 
 import (
+	"github.com/amsibamsi/three/math/geom"
 	"math"
 	"reflect"
 	"testing"
@@ -10,9 +11,9 @@ func TestNewDefCam(t *testing.T) {
 	c := *NewDefCam()
 	tc := reflect.TypeOf(c)
 	r := Camera{
-		Eye:  Vec3{0, 0, 0},
-		At:   Vec3{0, 0, -1},
-		Up:   Vec3{0, 1, 0},
+		Eye:  geom.Vec3{0, 0, 0},
+		At:   geom.Vec3{0, 0, -1},
+		Up:   geom.Vec3{0, 1, 0},
 		Near: 1.0,
 		Far:  100.0,
 		Fov:  math.Pi / 2,
@@ -26,14 +27,14 @@ func TestNewDefCam(t *testing.T) {
 
 func TestCamAxes(t *testing.T) {
 	c := Camera{
-		Eye: Vec3{0, 0, 0},
-		At:  Vec3{-3, 0, 0},
-		Up:  Vec3{0, 0, -2},
+		Eye: geom.Vec3{0, 0, 0},
+		At:  geom.Vec3{-3, 0, 0},
+		Up:  geom.Vec3{0, 0, -2},
 	}
 	x, y, z := c.CamAxes()
-	xr := Vec3{0, -1, 0}
-	yr := Vec3{0, 0, -1}
-	zr := Vec3{1, 0, 0}
+	xr := geom.Vec3{0, -1, 0}
+	yr := geom.Vec3{0, 0, -1}
+	zr := geom.Vec3{1, 0, 0}
 	if *x != xr {
 		t.Errorf("expected x to be '%v' but got '%v'", xr, *x)
 	}
@@ -46,8 +47,8 @@ func TestCamAxes(t *testing.T) {
 }
 
 func TestTranslTransf(t *testing.T) {
-	m := *TranslTransf(&Vec3{1, 2, 3})
-	r := Mat4{
+	m := *TranslTransf(&geom.Vec3{1, 2, 3})
+	r := geom.Mat4{
 		1, 0, 0, 1,
 		0, 1, 0, 2,
 		0, 0, 1, 3,
@@ -59,11 +60,11 @@ func TestTranslTransf(t *testing.T) {
 }
 
 func TestCoordTransf(t *testing.T) {
-	x := Vec3{1, 0, 0}
-	y := Vec3{0, 1, 0}
-	z := Vec3{0, 0, 1}
+	x := geom.Vec3{1, 0, 0}
+	y := geom.Vec3{0, 1, 0}
+	z := geom.Vec3{0, 0, 1}
 	m := CoordTransf(&x, &y, &z)
-	r := Mat4{
+	r := geom.Mat4{
 		1, 0, 0, 0,
 		0, 1, 0, 0,
 		0, 0, 1, 0,
@@ -76,12 +77,12 @@ func TestCoordTransf(t *testing.T) {
 
 func TestCamTransf(t *testing.T) {
 	c := Camera{
-		Eye: Vec3{1, 1, 1},
-		At:  Vec3{1, 1, 0},
-		Up:  Vec3{0, 1, 0},
+		Eye: geom.Vec3{1, 1, 1},
+		At:  geom.Vec3{1, 1, 0},
+		Up:  geom.Vec3{0, 1, 0},
 	}
 	m := c.CamTransf()
-	r := Mat4{
+	r := geom.Mat4{
 		1, 0, 0, -1,
 		0, 1, 0, -1,
 		0, 0, 1, -1,
@@ -97,7 +98,7 @@ func TestProjTransf(t *testing.T) {
 		Near: 3,
 	}
 	m := c.ProjTransf()
-	r := Mat4{
+	r := geom.Mat4{
 		3, 0, 0, 0,
 		0, 3, 0, 0,
 		0, 0, 3, 0,
@@ -133,9 +134,9 @@ func TestScreenTransf1(t *testing.T) {
 		Nheight: 10,
 	}
 	m := *ScreenTransf(&f, 100, 100)
-	v := Vec4{-10, 10, 2, 2}
+	v := geom.Vec4{-10, 10, 2, 2}
 	w := *m.Transf(&v)
-	r := Vec4{0, 0, 2, 2}
+	r := geom.Vec4{0, 0, 2, 2}
 	if w != r {
 		t.Errorf("expected '%v' but got '%v'", r, w)
 	}
@@ -147,9 +148,9 @@ func TestScreenTransf2(t *testing.T) {
 		Nheight: 10,
 	}
 	m := *ScreenTransf(&f, 100, 100)
-	v := Vec4{-5, 5, 2, 2}
+	v := geom.Vec4{-5, 5, 2, 2}
 	w := *m.Transf(&v)
-	r := Vec4{50, 50, 2, 2}
+	r := geom.Vec4{50, 50, 2, 2}
 	if w != r {
 		t.Errorf("expected '%v' but got '%v'", r, w)
 	}
@@ -158,10 +159,10 @@ func TestScreenTransf2(t *testing.T) {
 func TestPerspTransf(t *testing.T) {
 	c := NewDefCam()
 	m := c.PerspTransf(100, 100)
-	v := &Vec4{2, 1, -2, 1}
+	v := &geom.Vec4{2, 1, -2, 1}
 	w := m.Transf(v)
 	w.Norm()
-	r := &Vec4{100, 25, -1, 1}
+	r := &geom.Vec4{100, 25, -1, 1}
 	if *w != *r {
 		t.Errorf("expected '%v' but got '%v'", r, w)
 	}

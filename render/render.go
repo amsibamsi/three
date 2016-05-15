@@ -1,11 +1,12 @@
-package three
+package render
 
 import (
+	"github.com/amsibamsi/three/math/geom"
 	"math"
 )
 
-func TranslTransf(v *Vec3) *Mat4 {
-	return &Mat4{
+func TranslTransf(v *geom.Vec3) *geom.Mat4 {
+	return &geom.Mat4{
 		1, 0, 0, v[0],
 		0, 1, 0, v[1],
 		0, 0, 1, v[2],
@@ -27,8 +28,8 @@ func TranslTransf(v *Vec3) *Mat4 {
 // coordinates. So the transformation is a matrix where the axes of the
 // argument basis are the rows of the matrix. We fill up with 0 and 1 to make
 // the matrix homogeneous.
-func CoordTransf(x, y, z *Vec3) *Mat4 {
-	return &Mat4{
+func CoordTransf(x, y, z *geom.Vec3) *geom.Mat4 {
+	return &geom.Mat4{
 		x[0], x[1], x[2], 0,
 		y[0], y[1], y[2], 0,
 		z[0], z[1], z[2], 0,
@@ -48,15 +49,15 @@ type Camera struct {
 
 	// Eye is the position of the eye to look from. For each object to project a
 	// virtual line to the eye is drawn.
-	Eye Vec3
+	Eye geom.Vec3
 
 	// At is the direction to look at from the eye.
-	At Vec3
+	At geom.Vec3
 
 	// Up determines the orientation of the view. Up not being perpendicular to
 	// At results in the same orientation as if Up was first projected to the
 	// normal plane of At through Eye.
-	Up Vec3
+	Up geom.Vec3
 
 	// Near is the distance from the eye in the looking direction where the
 	// orthogonal plane is set to project onto.
@@ -76,9 +77,9 @@ type Camera struct {
 // NewDefCam returns a new camera with default settings.
 func NewDefCam() *Camera {
 	return &Camera{
-		Eye:  Vec3{0, 0, 0},
-		At:   Vec3{0, 0, -1},
-		Up:   Vec3{0, 1, 0},
+		Eye:  geom.Vec3{0, 0, 0},
+		At:   geom.Vec3{0, 0, -1},
+		Up:   geom.Vec3{0, 1, 0},
 		Near: 1.0,
 		Far:  100.0,
 		Fov:  math.Pi / 2,
@@ -88,14 +89,14 @@ func NewDefCam() *Camera {
 
 // CamAxes returns the 3 axes that make up the orthonormal basis of the
 // camera's right-handed coordinate system.
-func (c *Camera) CamAxes() (*Vec3, *Vec3, *Vec3) {
+func (c *Camera) CamAxes() (*geom.Vec3, *geom.Vec3, *geom.Vec3) {
 	z := c.Eye
 	z.Sub(&c.At)
 	z.Norm()
-	x := Cross(&c.Up, &z)
+	x := geom.Cross(&c.Up, &z)
 	x.Norm()
 	// Recompute up, c.Up might not be perpendicular or normalized
-	y := Cross(&z, x)
+	y := geom.Cross(&z, x)
 	return x, y, &z
 }
 
@@ -109,7 +110,7 @@ func (c *Camera) CamAxes() (*Vec3, *Vec3, *Vec3) {
 // we first translate the eye of the camera to the origin and then rotate the
 // camera until it matches the world view. Instead of rotating we can use the
 // coordinate transformation function CoordTransf.
-func (c *Camera) CamTransf() *Mat4 {
+func (c *Camera) CamTransf() *geom.Mat4 {
 	x, y, z := c.CamAxes()
 	m := CoordTransf(x, y, z)
 	e := c.Eye
@@ -123,9 +124,9 @@ func (c *Camera) CamTransf() *Mat4 {
 // projecting on the near plane of the camera. The z coordinate becomes -c.Near
 // and x, y are multiplied by -c.Near/z. -z is factored out as the homogeneous
 // part.
-func (c *Camera) ProjTransf() *Mat4 {
+func (c *Camera) ProjTransf() *geom.Mat4 {
 	n := c.Near
-	return &Mat4{
+	return &geom.Mat4{
 		n, 0, 0, 0,
 		0, n, 0, 0,
 		0, 0, n, 0,
@@ -170,11 +171,11 @@ func (c *Camera) Frustum() *Frustum {
 // to screen coordinates. The upper left corner of the near rectangle will be
 // (0,0) and the bottom right will be (w,h). If the aspect ratio does not match
 // the camera the image will be distorted.
-func ScreenTransf(f *Frustum, w, h int) *Mat4 {
+func ScreenTransf(f *Frustum, w, h int) *geom.Mat4 {
 	wf := float64(w)
 	hf := float64(h)
-	t := TranslTransf(&Vec3{f.Nwidth / 2, -f.Nheight / 2, 0})
-	m := Mat4{
+	t := TranslTransf(&geom.Vec3{f.Nwidth / 2, -f.Nheight / 2, 0})
+	m := geom.Mat4{
 		wf / f.Nwidth, 0, 0, 0,
 		0, -hf / f.Nheight, 0, 0,
 		0, 0, 1, 0,
@@ -192,7 +193,7 @@ func ScreenTransf(f *Frustum, w, h int) *Mat4 {
 //   - screen transformation
 //   - perspective transformation
 //   - camera transformation
-func (c *Camera) PerspTransf(w, h int) *Mat4 {
+func (c *Camera) PerspTransf(w, h int) *geom.Mat4 {
 	f := c.Frustum()
 	m := ScreenTransf(f, w, h)
 	m.Mul(c.ProjTransf())
