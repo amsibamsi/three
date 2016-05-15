@@ -22,6 +22,14 @@ var (
 	glfwInitDone = false
 )
 
+const (
+	KeyQ = C.GLFW_KEY_Q
+	KeyW = C.GLFW_KEY_W
+	KeyS = C.GLFW_KEY_S
+	KeyA = C.GLFW_KEY_A
+	KeyD = C.GLFW_KEY_D
+)
+
 // initGlfw initializes windowing by initializing GLFW. The current goroutine
 // will be locked to the OS thread since most GLFW functions are not
 // thread-safe.
@@ -115,6 +123,7 @@ func NewWindow(width, height int, title string) (*Window, error) {
 		C.int(width),
 		C.int(height),
 	)
+	C.glfwSetInputMode(glfwWin, C.GLFW_CURSOR, C.GLFW_CURSOR_DISABLED)
 	return &Window{width, height, glfwWin, texId, tex}, nil
 }
 
@@ -223,6 +232,14 @@ func (w *Window) Line(v1, v2 *geom.Vec2, r, g, b byte) {
 		x += xinc
 		y += yinc
 	}
+}
+
+type Key C.int
+
+//
+func (w *Window) KeyDown(k Key) bool {
+	state := C.glfwGetKey(w.glfwWin, C.int(k))
+	return (state == C.GLFW_PRESS)
 }
 
 // Update updates the window. It does the following in order listed:

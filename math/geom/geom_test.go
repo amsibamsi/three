@@ -6,12 +6,21 @@ import (
 	"testing"
 )
 
+var norm3tests = []struct {
+	vec, norm Vec3
+}{
+	{Vec3{10, 0, 0}, Vec3{1, 0, 0}},
+	{Vec3{0, -1, 0}, Vec3{0, -1, 0}},
+	{Vec3{0, 0, 0}, Vec3{0, 0, 0}},
+}
+
 func TestNorm3(t *testing.T) {
-	v := Vec3{10, 0, 0}
-	r := Vec3{1, 0, 0}
-	v.Norm()
-	if v != r {
-		t.Errorf("expected '%v' but got '%v'", r, v)
+	for _, test := range norm3tests {
+		v := test.vec
+		v.Norm()
+		if v != test.norm {
+			t.Errorf("expected '%v' but got '%v'", test.norm, v)
+		}
 	}
 }
 
@@ -29,6 +38,25 @@ func TestSub(t *testing.T) {
 	w := Vec3{1, 1, -6}
 	r := Vec3{49, -3, 13}
 	v.Sub(&w)
+	if v != r {
+		t.Errorf("expected '%v' but got '%v'", r, v)
+	}
+}
+
+func TestAdd(t *testing.T) {
+	v := Vec3{50, -2, 7}
+	w := Vec3{1, 1, -6}
+	r := Vec3{51, -1, 1}
+	v.Add(&w)
+	if v != r {
+		t.Errorf("expected '%v' but got '%v'", r, v)
+	}
+}
+
+func TestScale(t *testing.T) {
+	v := Vec3{1, -2, 3}
+	v.Scale(2)
+	r := Vec3{2, -4, 6}
 	if v != r {
 		t.Errorf("expected '%v' but got '%v'", r, v)
 	}

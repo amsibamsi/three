@@ -16,9 +16,11 @@ type Vec3 [3]float64
 // Norm normalizes a vector to length 1 keeping its direction.
 func (v *Vec3) Norm() {
 	abs := math.Sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
-	v[0] /= abs
-	v[1] /= abs
-	v[2] /= abs
+	if abs != 0 {
+		v[0] /= abs
+		v[1] /= abs
+		v[2] /= abs
+	}
 }
 
 // Neg negates the vector's components.
@@ -33,6 +35,20 @@ func (v *Vec3) Sub(w *Vec3) {
 	v[0] -= w[0]
 	v[1] -= w[1]
 	v[2] -= w[2]
+}
+
+// Add adds another vector.
+func (v *Vec3) Add(w *Vec3) {
+	v[0] += w[0]
+	v[1] += w[1]
+	v[2] += w[2]
+}
+
+// Scale scales the vector.
+func (v *Vec3) Scale(s float64) {
+	v[0] *= s
+	v[1] *= s
+	v[2] *= s
 }
 
 // Cross returns a new vector that is the cross product of the two vectors.
