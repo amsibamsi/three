@@ -11,7 +11,8 @@ import "C"
 
 import (
 	"errors"
-	"github.com/amsibamsi/three"
+	tmath "github.com/amsibamsi/three/math"
+	"github.com/amsibamsi/three/math/geom"
 	"runtime"
 	"unsafe"
 )
@@ -161,7 +162,7 @@ func (w *Window) resize() {
 }
 
 // Set works like Setxy, but for vectors.
-func (w *Window) Set(v *three.Vec2, r, g, b byte) {
+func (w *Window) Set(v *geom.Vec2, r, g, b byte) {
 	if v[0] < 0 || v[0] > w.width || v[1] < 0 || v[1] > w.height {
 		return
 	}
@@ -185,7 +186,7 @@ func (w *Window) Setxy(x, y int, r, g, b byte) {
 
 // Dot draws visible dot at the given coordinates. It's bigger than just one
 // pixel.
-func (w *Window) Dot(v *three.Vec2, r, g, b byte) {
+func (w *Window) Dot(v *geom.Vec2, r, g, b byte) {
 	d := *v
 	w.Set(&d, r, g, b)
 	d[0] -= 1
@@ -200,7 +201,7 @@ func (w *Window) Dot(v *three.Vec2, r, g, b byte) {
 }
 
 // Line draws a line between two points. It's 1 pixel thick.
-func (w *Window) Line(v1, v2 *three.Vec2, r, g, b byte) {
+func (w *Window) Line(v1, v2 *geom.Vec2, r, g, b byte) {
 	// Always draw from left to right (x1 <= x2)
 	if v1[0] > v2[0] {
 		v1, v2 = v2, v1
@@ -208,17 +209,17 @@ func (w *Window) Line(v1, v2 *three.Vec2, r, g, b byte) {
 	dx := v2[0] - v1[0]
 	dy := v2[1] - v1[1]
 	var steps int
-	if three.Abs(dx) > three.Abs(dy) {
+	if tmath.Absi(dx) > tmath.Absi(dy) {
 		steps = dx
 	} else {
-		steps = three.Abs(dy)
+		steps = tmath.Absi(dy)
 	}
 	xinc := float64(dx) / float64(steps)
 	yinc := float64(dy) / float64(steps)
 	x := float64(v1[0])
 	y := float64(v1[1])
 	for s := 0; s <= steps; s++ {
-		w.Setxy(three.Round(x), three.Round(y), r, g, b)
+		w.Setxy(tmath.Round(x), tmath.Round(y), r, g, b)
 		x += xinc
 		y += yinc
 	}
