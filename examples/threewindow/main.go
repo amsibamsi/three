@@ -11,7 +11,7 @@ import (
 // main initializes windowing, creates a new, waits for close event, destroys
 // the window and terminates windowing.
 func main() {
-	w, err := window.NewWindow(1024, 768, "Third Example")
+	w, err := window.NewWindow(1024, 768, "Three Example")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)

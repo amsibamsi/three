@@ -4,7 +4,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/amsibamsi/three"
+	tmath "github.com/amsibamsi/three/math"
 	"github.com/amsibamsi/three/window"
 	"math/rand"
 	"os"
@@ -15,7 +15,7 @@ import (
 func main() {
 	width := 1024
 	height := 768
-	w, err := window.NewWindow(width, height, "Third Animate")
+	w, err := window.NewWindow(width, height, "Three Animate")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
@@ -29,9 +29,9 @@ func main() {
 		width = w.Width()
 		height = w.Height()
 		x = x + r.Intn(3) - 1
-		x = three.Min(width, three.Max(0, x))
+		x = tmath.Mini(width, tmath.Maxi(0, x))
 		y = y + r.Intn(3) - 1
-		y = three.Min(height, three.Max(0, y))
+		y = tmath.Mini(height, tmath.Maxi(0, y))
 		w.Setxy(x, y, 255, 0, 0)
 		w.Update()
 	}
