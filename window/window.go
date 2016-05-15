@@ -234,9 +234,11 @@ func (w *Window) Line(v1, v2 *geom.Vec2, r, g, b byte) {
 	}
 }
 
+// Key is a wrapper for GLFW key codes.
 type Key C.int
 
-//
+// KeyDown returns true if the corresponding key is currently (since the last
+// polling of events) pressed down. Otherwise it returns false.
 func (w *Window) KeyDown(k Key) bool {
 	state := C.glfwGetKey(w.glfwWin, C.int(k))
 	return (state == C.GLFW_PRESS)
