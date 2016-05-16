@@ -27,8 +27,8 @@ func main() {
 		*m = math.Sin(float64(now.UnixNano()) / 1e9)
 		c := &cam.At[0]
 		*c = math.Cos(float64(now.UnixNano()) / 1e9)
-		cam.UpdateAr(win)
-		t := cam.PerspTransfWin(win)
+		cam.Ar = float64(win.Width()) / float64(win.Height())
+		t := cam.PerspTransf(win.Width(), win.Height())
 		q := p.Transf(t)
 		win.Clear()
 		q.Draw(win)

@@ -2,7 +2,6 @@ package render
 
 import (
 	"github.com/amsibamsi/three/math/geom"
-	"github.com/amsibamsi/three/window"
 	"math"
 )
 
@@ -47,11 +46,6 @@ func CoordTransf(x, y, z *geom.Vec3) *geom.Mat4 {
 //   - Negative z along At
 //   - Positive x along the cross product of y and z (to the right)
 //
-// Windowing
-//
-// If using a camera to render an image for a window it is useful to use
-// UpdateAr() to update the aspect ratio to the current window size and
-// PerspTransfWin() to get the projection matrix for the window.
 type Camera struct {
 
 	// Eye is the position of the eye to look from. For each object to project a
@@ -141,11 +135,6 @@ func (c *Camera) ProjTransf() *geom.Mat4 {
 	}
 }
 
-// UpdateAr update the aspect ratio from the current window size.
-func (c *Camera) UpdateAr(w *window.Window) {
-	c.Ar = float64(w.Width()) / float64(w.Height())
-}
-
 // Frustum is the shape formed by the camera that determines what objects are
 // visible and how they are perspectively projected. It is formed by two
 // perpendicular rectangles with centers on a line. The near rectangle is on
@@ -211,10 +200,4 @@ func (c *Camera) PerspTransf(w, h int) *geom.Mat4 {
 	m.Mul(c.ProjTransf())
 	m.Mul(c.CamTransf())
 	return m
-}
-
-// PerspTransfWin is like PerspTransf() but takes the width/height from the
-// current window state.
-func (c *Camera) PerspTransfWin(w *window.Window) *geom.Mat4 {
-	return c.PerspTransf(w.Width(), w.Height())
 }
