@@ -14,5 +14,5 @@ before_install:
   - unzip glfw-3.1.2.zip
   - cd glfw-3.1.2
   - cmake -DBUILD_SHARED_LIBS=true .
-  - sudo make install
+  - sudo make DESTDIR=/usr install
   - cd ..
