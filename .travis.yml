@@ -16,3 +16,6 @@ before_install:
   - cmake -DBUILD_SHARED_LIBS=true -DCMAKE_INSTALL_PREFIX=/usr .
   - sudo make install
   - cd ..
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
