@@ -1,6 +1,6 @@
 void glfwError(int err, const char* desc);
 int initGlfw();
-GLFWwindow* createWin(int width, int height, char* title);
+GLFWwindow* createWin(int width, int height, char* title, int visible);
 int initGlew(GLFWwindow* win);
 void initWin(GLFWwindow* win, int width, int height);
 void winResized(GLFWwindow* win, int width, int height);

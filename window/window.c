@@ -27,11 +27,15 @@ int initGlfw() {
 // handled by the error callback.
 GLFWwindow* createWin(int width,
                       int height,
-                      char* title) {
+                      char* title,
+                      int visible) {
   GLFWwindow* win;
   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  if (!visible) {
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+  }
   win = glfwCreateWindow(width, height, title, NULL, NULL);
   if (win != NULL) {
     glfwMakeContextCurrent(win);

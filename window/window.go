@@ -95,7 +95,11 @@ type Window struct {
 // NewWindow returns a new window. It initializes GLFW and GLEW, creates a new
 // GLFW window with given width, height and title, initializes the texture
 // data.
-func NewWindow(width, height int, title string) (*Window, error) {
+func NewWindow(
+	width, height int,
+	title string,
+	visible bool,
+) (*Window, error) {
 	if width < 0 {
 		return nil, errors.New("Width must not be < 0")
 	}
@@ -106,7 +110,16 @@ func NewWindow(width, height int, title string) (*Window, error) {
 	if err != nil {
 		return nil, err
 	}
-	glfwWin := C.createWin(C.int(width), C.int(height), C.CString(title))
+	var v = 0
+	if visible {
+		v = 1
+	}
+	glfwWin := C.createWin(
+		C.int(width),
+		C.int(height),
+		C.CString(title),
+		C.int(v),
+	)
 	if glfwWin == nil {
 		Terminate()
 		return nil, errors.New("Failed to create window")
@@ -262,6 +275,11 @@ func (w *Window) Clear() {
 	for i, _ := range w.tex {
 		w.tex[i] = 0
 	}
+}
+
+// SetClose requests the window to close.
+func (w *Window) SetClose() {
+	C.glfwSetWindowShouldClose(w.glfwWin, C.GL_TRUE)
 }
 
 // ShouldClose returns true if the window was requested to close by a GUI

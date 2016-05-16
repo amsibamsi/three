@@ -15,7 +15,7 @@ import (
 func main() {
 	width := 1024
 	height := 768
-	w, err := window.NewWindow(width, height, "Three Animate")
+	w, err := window.NewWindow(width, height, "Three Animate", true)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)

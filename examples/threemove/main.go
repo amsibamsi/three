@@ -14,7 +14,7 @@ import (
 // draws the result to a window and displays it. The middle point of the
 // triangle continuously changes position relative to the current time.
 func main() {
-	win, err := window.NewWindow(1024, 768, "Three Move")
+	win, err := window.NewWindow(1024, 768, "Three Move", true)
 	if err != nil {
 		panic(err)
 	}
